@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v12';
+const CACHE_NAME = 'rnj-jewellers-v13';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
