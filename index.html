@@ -255,8 +255,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('featured-products-grid');
-      if (grid) {
-        const products = API.getProducts().slice(0, 4);
+      if (grid && typeof getFeaturedProducts === 'function') {
+        const products = getFeaturedProducts();
         grid.innerHTML = products.map(renderProductCard).join('');
       }
     });

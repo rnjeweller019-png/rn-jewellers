@@ -24,10 +24,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+// Helper: Get Featured Products (prioritizes is_featured: true, fallback to top products)
+function getFeaturedProducts() {
+  const allProducts = API.getProducts();
+  const featured = allProducts.filter(p => p.is_featured === true || String(p.is_featured).toLowerCase() === 'true');
+  if (featured.length >= 4) {
+    return featured.slice(0, 4);
+  }
+  const remaining = allProducts.filter(p => !(p.is_featured === true || String(p.is_featured).toLowerCase() === 'true'));
+  return [...featured, ...remaining].slice(0, 4);
+}
+
 function refreshPageContentsSilently() {
   const featuredGrid = document.getElementById('featured-products-grid');
   if (featuredGrid && typeof renderProductCard === 'function') {
-    const products = API.getProducts().slice(0, 4);
+    const products = getFeaturedProducts();
     featuredGrid.innerHTML = products.map(renderProductCard).join('');
   }
 
