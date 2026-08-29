@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v1';
+const CACHE_NAME = 'rnj-jewellers-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -18,10 +18,20 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Activate new SW immediately
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE).catch(err => console.log('Cache addAll warning:', err));
     })
+  );
+});
+
+self.addEventListener('activate', (e) => {
+  // Clear old caches
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
 });
 
@@ -37,6 +47,47 @@ self.addEventListener('fetch', (e) => {
     }).catch(() => {
       // Fallback to cache if offline
       return caches.match(e.request);
+    })
+  );
+});
+
+// ─── PUSH EVENT HANDLER (Background Notifications) ─────────────────────────
+self.addEventListener('push', (e) => {
+  let data = { title: '✨ RN Jewellers', body: 'You have a new notification.' };
+  if (e.data) {
+    try {
+      data = e.data.json();
+    } catch(err) {
+      data.body = e.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body || data.message || 'Check out our latest jewellery collection!',
+    icon: '/rn-jewellers/assets/logo.png',
+    badge: '/rn-jewellers/assets/logo.png',
+    tag: 'rnj-notification',
+    requireInteraction: true,
+    data: { url: data.url || '/rn-jewellers/' }
+  };
+
+  e.waitUntil(self.registration.showNotification(data.title || '✨ RN Jewellers', options));
+});
+
+// ─── NOTIFICATION CLICK HANDLER ─────────────────────────────────────────────
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const targetUrl = (e.notification.data && e.notification.data.url) || '/rn-jewellers/';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (let client of windowClients) {
+        if (client.url.includes('rn-jewellers') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
     })
   );
 });

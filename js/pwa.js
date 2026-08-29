@@ -1,15 +1,19 @@
 /**
- * RN JEWELLERS — PROGRESSIVE WEB APP (PWA) INSTALL & CACHE MANAGER
+ * RN JEWELLERS — PROGRESSIVE WEB APP (PWA) INSTALL & PUSH NOTIFICATION MANAGER
  */
 
+// ─── SERVICE WORKER REGISTRATION ───────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('PWA ServiceWorker registered', reg.scope))
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        console.log('PWA ServiceWorker registered', reg.scope);
+      })
       .catch(err => console.log('ServiceWorker registration failed', err));
   });
 }
 
+// ─── PWA INSTALL PROMPT ─────────────────────────────────────────────────────
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -21,7 +25,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted PWA prompt');
+          console.log('User accepted PWA install');
         }
         deferredPrompt = null;
         pwaBtn.style.display = 'none';
@@ -30,8 +34,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   }
 });
 
-// ONESIGNAL WEB PUSH NOTIFICATIONS SDK INITIALIZATION
-const onesignalAppId = (typeof CONFIG !== 'undefined' && CONFIG.ONESIGNAL_APP_ID && CONFIG.ONESIGNAL_APP_ID.trim()) ? CONFIG.ONESIGNAL_APP_ID.trim() : "91a28970-9e1b-4343-a379-de2a1923e7a7";
+// ─── ONESIGNAL PUSH NOTIFICATIONS ───────────────────────────────────────────
+const onesignalAppId = (typeof CONFIG !== 'undefined' && CONFIG.ONESIGNAL_APP_ID && CONFIG.ONESIGNAL_APP_ID.trim())
+  ? CONFIG.ONESIGNAL_APP_ID.trim()
+  : '91a28970-9e1b-4343-a379-de2a1923e7a7';
 
 if (onesignalAppId) {
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -39,20 +45,55 @@ if (onesignalAppId) {
     try {
       await OneSignal.init({
         appId: onesignalAppId,
-        safari_web_id: "web.onesignal.auto.2c31ff0c-1624-4aec-8f89-a4f0b1da0ea1",
+        safari_web_id: 'web.onesignal.auto.2c31ff0c-1624-4aec-8f89-a4f0b1da0ea1',
         notifyButton: {
           enable: true,
           size: 'medium',
-          position: 'bottom-left'
+          position: 'bottom-left',
+          text: {
+            'tip.state.unsubscribed': 'Subscribe for exclusive offers!',
+            'tip.state.subscribed': 'You are subscribed',
+            'tip.state.blocked': 'Push notifications blocked',
+          }
         },
+        welcomeNotification: {
+          title: '✨ RN Jewellers',
+          message: 'Thanks for subscribing! You will get exclusive offers & new arrivals first.'
+        },
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: 'push',
+              autoPrompt: false, // We prompt manually after delay — not on every visit
+              text: {
+                actionMessage: 'Get notified about new arrivals & exclusive jewellery offers!',
+                acceptButton: 'Allow',
+                cancelButton: 'Later'
+              }
+            }]
+          }
+        }
       });
 
-      // Explicitly prompt for Push Notification Permission
-      if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-        OneSignal.Notifications.requestPermission();
-      } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-        OneSignal.Slidedown.promptPush();
+      // Only prompt once per browser — check if already asked
+      const alreadyAsked = localStorage.getItem('rnj_push_asked');
+      if (!alreadyAsked) {
+        // Delay 8 seconds so it doesn't startle first-time visitors
+        setTimeout(async () => {
+          try {
+            const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
+            if (!isSubscribed) {
+              if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+                await OneSignal.Slidedown.promptPush();
+              } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+                await OneSignal.Notifications.requestPermission();
+              }
+            }
+          } catch(e) { /* ignore */ }
+          localStorage.setItem('rnj_push_asked', '1');
+        }, 8000);
       }
+
     } catch(err) {
       console.log('OneSignal init notice:', err);
     }
