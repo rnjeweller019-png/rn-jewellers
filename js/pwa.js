@@ -72,6 +72,9 @@ if (onesignalAppId) {
           const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
           const subId = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.id;
           if (isOptedIn && subId && !subId.startsWith('local-')) {
+            if (localStorage.getItem('rnj_logged_sub_' + subId)) {
+              return true; // Already logged — stop polling immediately
+            }
             logSubscriberToServer(subId);
             return true;
           }
@@ -269,9 +272,19 @@ function showSubscriptionToast(message) {
   }, 4500);
 }
 
-// ─── SERVER LOGGING (IMAGE BEACON + FETCH DUAL STRATEGY) ─────────────────────
+// ─── SERVER LOGGING (SINGLE EXECUTION PER SUBSCRIBER) ────────────────────────
 function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
+  if (String(subscriptionId).startsWith('local-')) return;
+
+  // STRICT SINGLE-TIME CHECK: Stop immediately if already logged from this browser
+  const loggedKey = 'rnj_logged_sub_' + subscriptionId;
+  if (localStorage.getItem(loggedKey)) {
+    return; // Already logged once — zero extra requests or glitches!
+  }
+
+  // Mark as logged permanently in browser local storage
+  localStorage.setItem(loggedKey, '1');
 
   const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
   const device = isMobile ? (navigator.userAgent.includes('iPhone') ? 'iPhone' : 'Android Mobile') : 'Desktop';
@@ -292,15 +305,6 @@ function logSubscriberToServer(subscriptionId) {
     img.src = url;
   } catch(e) {}
 
-  // Fire fetch backup
-  try {
-    fetch(url, { mode: 'no-cors' }).catch(() => {});
-  } catch(e) {}
-
-  // Trigger one-time confirmation toast to user
-  const toastKey = 'rnj_sub_toast_done_' + subscriptionId;
-  if (!localStorage.getItem(toastKey)) {
-    localStorage.setItem(toastKey, '1');
-    showSubscriptionToast('✨ You are subscribed! You will receive exclusive offers & new arrivals first.');
-  }
+  // Trigger one-time golden confirmation toast to user
+  showSubscriptionToast('✨ You are subscribed! You will receive exclusive offers & new arrivals first.');
 }
