@@ -141,22 +141,18 @@ window.triggerPushPrompt = function() {
 
 function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
-  const loggedKey = 'rnj_sub_logged_' + subscriptionId;
-  if (localStorage.getItem(loggedKey)) return;
 
   const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
   const device = isMobile ? 'Mobile' : 'Desktop';
   const tz = (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ? (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata') : 'Asia/Kolkata';
 
-  const params = new URLSearchParams({
-    action: 'logSubscriber',
-    'data[subscription_id]': subscriptionId,
-    'data[device]': device,
-    'data[timezone]': tz,
-    'data[browser]': navigator.userAgent
-  });
+  const payload = encodeURIComponent(JSON.stringify({
+    subscription_id: subscriptionId,
+    device: device,
+    timezone: tz,
+    browser: navigator.userAgent
+  }));
 
-  fetch(`${CONFIG.APPS_SCRIPT_URL}?${params.toString()}`)
-    .then(() => localStorage.setItem(loggedKey, '1'))
+  fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`)
     .catch(() => {});
 }
