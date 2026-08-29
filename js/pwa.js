@@ -64,7 +64,7 @@ if (onesignalAppId) {
           slidedown: {
             prompts: [{
               type: 'push',
-              autoPrompt: false, // We prompt manually after delay — not on every visit
+              autoPrompt: true, // Enabled for native mobile Chrome & Safari auto-prompt
               text: {
                 actionMessage: 'Get notified about new arrivals & exclusive jewellery offers!',
                 acceptButton: 'Allow',
@@ -95,24 +95,9 @@ if (onesignalAppId) {
               clearInterval(checkSubInterval);
             }
           } catch(e) {}
-          if (attempts > 10) clearInterval(checkSubInterval);
+          if (attempts > 15) clearInterval(checkSubInterval);
         }, 1000);
       } catch(e) {}
-
-      // Auto-prompt logic — prompts if permission is not yet granted
-      setTimeout(async () => {
-        try {
-          const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
-          const currentPerm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
-          if (!isSubscribed && currentPerm !== 'granted') {
-            if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-              await OneSignal.Notifications.requestPermission();
-            } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-              await OneSignal.Slidedown.promptPush();
-            }
-          }
-        } catch(e) { /* ignore */ }
-      }, 3000);
 
     } catch(err) {
       console.log('OneSignal init notice:', err);
@@ -143,7 +128,7 @@ function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
 
   const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
-  const device = isMobile ? 'Mobile' : 'Desktop';
+  const device = isMobile ? (navigator.userAgent.includes('iPhone') ? 'iPhone' : 'Android Mobile') : 'Desktop';
   const tz = (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ? (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata') : 'Asia/Kolkata';
 
   const payload = encodeURIComponent(JSON.stringify({
@@ -153,6 +138,7 @@ function logSubscriberToServer(subscriptionId) {
     browser: navigator.userAgent
   }));
 
-  fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`)
-    .catch(() => {});
+  // Bulletproof CORS-free image beacon to send subscriber data to Google Apps Script
+  const img = new Image();
+  img.src = `${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`;
 }
