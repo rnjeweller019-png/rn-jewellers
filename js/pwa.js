@@ -52,72 +52,61 @@ if (onesignalAppId) {
           position: 'bottom-left',
           text: {
             'tip.state.unsubscribed': 'Subscribe for exclusive offers!',
-            'tip.state.subscribed': 'You are subscribed',
+            'tip.state.subscribed': '✅ You are subscribed',
             'tip.state.blocked': 'Push notifications blocked',
           }
         },
         welcomeNotification: {
           title: '✨ RN Jewellers',
           message: 'Thanks for subscribing! You will get exclusive offers & new arrivals first.'
-        },
-        promptOptions: {
-          slidedown: {
-            prompts: [{
-              type: 'push',
-              autoPrompt: true, // Enabled for native mobile Chrome & Safari auto-prompt
-              text: {
-                actionMessage: 'Get notified about new arrivals & exclusive jewellery offers!',
-                acceptButton: 'Allow',
-                cancelButton: 'Later'
-              }
-            }]
-          }
         }
+        // NOTE: No promptOptions/autoPrompt here — notifyButton handles everything
       });
 
-      // Auto-log subscriber to Google Sheets Subscribers tab
-      try {
-        const tryLogCurrentSub = () => {
-          try {
-            const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
-            const subId = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.id;
-            if (isOptedIn && subId) {
-              logSubscriberToServer(subId);
-              return true;
-            }
-          } catch(e) {}
-          return false;
-        };
-
-        // 1. Listen for subscription changes
-        if (OneSignal.User && OneSignal.User.PushSubscription) {
-          OneSignal.User.PushSubscription.addEventListener('change', function(event) {
-            if (event.current && event.current.optedIn && event.current.id) {
-              logSubscriberToServer(event.current.id);
-            }
-          });
-        }
-
-        // 2. Listen for permission prompt approval
-        if (OneSignal.Notifications) {
-          OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
-            if (permission) {
-              setTimeout(tryLogCurrentSub, 2000);
-              setTimeout(tryLogCurrentSub, 5000);
-            }
-          });
-        }
-
-        // 3. Extended polling check (polls every 2 seconds for up to 60 seconds)
-        let attempts = 0;
-        const checkSubInterval = setInterval(() => {
-          attempts++;
-          const logged = tryLogCurrentSub();
-          if (logged || attempts > 30) {
-            clearInterval(checkSubInterval);
+      // Log subscriber after init — delay to let OneSignal finish registration
+      const tryLogCurrentSub = async () => {
+        try {
+          const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
+          const subId = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.id;
+          if (isOptedIn && subId) {
+            logSubscriberToServer(subId);
+            return true;
           }
-        }, 2000);
-      } catch(e) {}
+        } catch(e) {}
+        return false;
+      };
+
+      // 1. Fire immediately (for returning already-subscribed visitors)
+      setTimeout(tryLogCurrentSub, 3000);
+
+      // 2. Listen for subscription changes (fires when user clicks Subscribe)
+      if (OneSignal.User && OneSignal.User.PushSubscription) {
+        OneSignal.User.PushSubscription.addEventListener('change', async function(event) {
+          if (event.current && event.current.optedIn && event.current.id) {
+            // Wait 3s for Apple/Google to fully confirm subscription
+            setTimeout(() => logSubscriberToServer(event.current.id), 3000);
+            setTimeout(() => logSubscriberToServer(event.current.id), 7000);
+          }
+        });
+      }
+
+      // 3. Listen for permission approval (iOS PWA)
+      if (OneSignal.Notifications) {
+        OneSignal.Notifications.addEventListener('permissionChange', async function(permission) {
+          if (permission) {
+            setTimeout(tryLogCurrentSub, 3000);
+            setTimeout(tryLogCurrentSub, 8000);
+          }
+        });
+      }
+
+      // 4. Polling fallback every 3s for up to 60s
+      let attempts = 0;
+      const checkSubInterval = setInterval(async () => {
+        attempts++;
+        const logged = await tryLogCurrentSub();
+        if (logged || attempts > 20) clearInterval(checkSubInterval);
+      }, 3000);
 
     } catch(err) {
       console.log('OneSignal init notice:', err);
@@ -212,10 +201,19 @@ function logSubscriberToServer(subscriptionId) {
     subscription_id: subscriptionId,
     device: device,
     timezone: tz,
-    browser: navigator.userAgent
+    browser: navigator.userAgent.substring(0, 200) // trim to avoid URL length limits
   }));
 
-  // Bulletproof CORS-free image beacon to send subscriber data to Google Apps Script
-  const img = new Image();
-  img.src = `${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`;
+  const url = `${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`;
+
+  // Strategy 1: Image beacon (no CORS, works everywhere)
+  try {
+    const img = new Image();
+    img.src = url;
+  } catch(e) {}
+
+  // Strategy 2: fetch as backup (in case Image beacon fails silently)
+  try {
+    fetch(url, { mode: 'no-cors' }).catch(() => {});
+  } catch(e) {}
 }
