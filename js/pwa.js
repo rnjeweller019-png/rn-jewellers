@@ -89,30 +89,45 @@ if (onesignalAppId) {
         }
       } catch(e) {}
 
-      // Only prompt once per browser — check if already asked
-      const alreadyAsked = localStorage.getItem('rnj_push_asked');
-      if (!alreadyAsked) {
-        // Delay 8 seconds so it doesn't startle first-time visitors
-        setTimeout(async () => {
-          try {
-            const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
-            if (!isSubscribed) {
-              if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-                await OneSignal.Slidedown.promptPush();
-              } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-                await OneSignal.Notifications.requestPermission();
-              }
+      // Auto-prompt logic — prompts if permission is not yet granted
+      setTimeout(async () => {
+        try {
+          const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
+          const currentPerm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+          if (!isSubscribed && currentPerm !== 'granted') {
+            if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+              await OneSignal.Notifications.requestPermission();
+            } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+              await OneSignal.Slidedown.promptPush();
             }
-          } catch(e) { /* ignore */ }
-          localStorage.setItem('rnj_push_asked', '1');
-        }, 8000);
-      }
+          }
+        } catch(e) { /* ignore */ }
+      }, 3000);
 
     } catch(err) {
       console.log('OneSignal init notice:', err);
     }
   });
 }
+
+// Global helper to manually trigger push prompt on button/icon click
+window.triggerPushPrompt = function() {
+  if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+          await OneSignal.Notifications.requestPermission();
+        } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+          await OneSignal.Slidedown.promptPush();
+        }
+      } catch(e) {
+        if (typeof Notification !== 'undefined') Notification.requestPermission();
+      }
+    });
+  } else if (typeof Notification !== 'undefined') {
+    Notification.requestPermission();
+  }
+};
 
 function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
