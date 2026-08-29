@@ -71,7 +71,7 @@ if (onesignalAppId) {
         try {
           const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
           const subId = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.id;
-          if (isOptedIn && subId) {
+          if (isOptedIn && subId && !subId.startsWith('local-')) {
             logSubscriberToServer(subId);
             return true;
           }
