@@ -11,16 +11,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   logVisitorAnalytics();
 
   if (CONFIG.APPS_SCRIPT_URL) {
-    await API.syncWithServer();
+    await API.checkAndSyncServer();
     initLiveRateTicker();
     refreshPageContentsSilently();
 
-    // Silent background auto-sync every 30 seconds (no page reload)
+    // Smart 10-second background polling for timestamp changes
     setInterval(async () => {
-      await API.syncWithServer();
-      initLiveRateTicker();
-      refreshPageContentsSilently();
-    }, 30000);
+      const updated = await API.checkAndSyncServer();
+      if (updated) {
+        initLiveRateTicker();
+        refreshPageContentsSilently();
+      }
+    }, 10000);
   }
 });
 
@@ -217,15 +219,33 @@ function toggleWishlistClick(id, btn) {
   initWishlistBadge();
 }
 
+// Smart Visitor Analytics (10s Dwell Time + 5min Session Cooldown)
 function logVisitorAnalytics() {
-  if (CONFIG.APPS_SCRIPT_URL && !sessionStorage.getItem('rnj_visit_logged')) {
-    sessionStorage.setItem('rnj_visit_logged', 'true');
-    const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
-    const payload = encodeURIComponent(JSON.stringify({
-      page: window.location.pathname || 'index.html',
-      device: isMobile ? 'Mobile' : 'Desktop',
-      referrer: document.referrer || 'Direct'
-    }));
-    fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => {});
+  if (!CONFIG.APPS_SCRIPT_URL) return;
+
+  const FIVE_MIN_MS = 5 * 60 * 1000;
+  const now = Date.now();
+  const lastLog = parseInt(localStorage.getItem('rnj_last_visit_logged_time') || '0', 10);
+
+  // If user was logged less than 5 minutes ago, skip logging (active session)
+  if (now - lastLog < FIVE_MIN_MS) {
+    return;
   }
+
+  // 10-Second Dwell Timer: Only count if user stays on site for at least 10s
+  setTimeout(() => {
+    const currentNow = Date.now();
+    const currentLastLog = parseInt(localStorage.getItem('rnj_last_visit_logged_time') || '0', 10);
+
+    if (currentNow - currentLastLog >= FIVE_MIN_MS) {
+      localStorage.setItem('rnj_last_visit_logged_time', currentNow.toString());
+      const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
+      const payload = encodeURIComponent(JSON.stringify({
+        page: window.location.pathname || 'index.html',
+        device: isMobile ? 'Mobile' : 'Desktop',
+        referrer: document.referrer || 'Direct'
+      }));
+      fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => {});
+    }
+  }, 10000);
 }
