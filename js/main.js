@@ -196,7 +196,7 @@ function renderProductCard(product) {
         </button>
       </div>
       <div class="product-content">
-        <div class="product-category">${product.category} • ${product.purity} Gold</div>
+        <div class="product-category">${escapeHtml(product.category)} • ${escapeHtml(calc.purity_text)}</div>
         <h3 class="product-title">${product.name}</h3>
         <div class="product-meta">
           <span><i class="fas fa-weight-hanging"></i> ${product.weight_g}g</span>

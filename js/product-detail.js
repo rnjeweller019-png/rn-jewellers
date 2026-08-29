@@ -36,7 +36,7 @@ function initProductDetailPage() {
 
       <!-- Right: Product Info & Pricing Breakdown -->
       <div>
-        <div class="product-category" style="font-size:0.9rem; margin-bottom:10px;">${product.category.toUpperCase()} • ${product.purity} HALLMARK GOLD</div>
+        <div class="product-category" style="font-size:0.9rem; margin-bottom:10px;">${escapeHtml(product.category.toUpperCase())} • ${escapeHtml(calc.purity_text.toUpperCase())}</div>
         <h1 style="font-size:2.2rem; margin-bottom:15px; font-family:var(--font-heading);">${product.name}</h1>
         
         <div style="background:var(--surface-2); border:1px solid var(--border-gold); padding:20px; border-radius:var(--radius-md); margin-bottom:25px;">
@@ -54,9 +54,9 @@ function initProductDetailPage() {
           <details style="border-top:1px solid var(--border-dark); padding-top:15px; cursor:pointer;" open>
             <summary style="font-weight:600; color:var(--gold-primary); font-size:0.9rem;"><i class="fas fa-calculator"></i> View Price Breakdown Formula</summary>
             <div style="margin-top:15px; font-size:0.85rem; color:var(--text-muted); display:flex; flex-direction:column; gap:8px;">
-              <div style="display:flex; justify-content:space-between;"><span>Gold Weight:</span><strong>${product.weight_g} grams</strong></div>
-              <div style="display:flex; justify-content:space-between;"><span>Current ${product.purity} Gold Rate:</span><strong>₹${calc.metal_rate.toLocaleString('en-IN')}/g</strong></div>
-              <div style="display:flex; justify-content:space-between;"><span>Net Gold Cost (${product.weight_g}g × ₹${calc.metal_rate.toLocaleString('en-IN')}):</span><strong>₹${calc.raw_metal_cost.toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>${calc.metal_name} Weight:</span><strong>${product.weight_g} grams</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>Current ${calc.purity_text} Rate:</span><strong>₹${calc.metal_rate.toLocaleString('en-IN')}/g</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>Net ${calc.metal_name} Cost (${product.weight_g}g × ₹${calc.metal_rate.toLocaleString('en-IN')}):</span><strong>₹${calc.raw_metal_cost.toLocaleString('en-IN')}</strong></div>
               <div style="display:flex; justify-content:space-between;"><span>Making Charge:</span><strong style="${calc.is_free_making ? 'color:#2ecc71;' : ''}">${calc.is_free_making ? 'FREE (0%)' : calc.making_text}</strong></div>
               ${calc.discount_amount > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--success);"><span>Discount Applied (${calc.discount_percent}%):</span><strong>− ₹${calc.discount_amount.toLocaleString('en-IN')}</strong></div>` : ''}
               <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-dark); padding-top:8px; color:var(--text-main); font-weight:700;"><span>Total Final Price:</span><strong style="color:var(--gold-light);">₹${calc.final_price.toLocaleString('en-IN')}</strong></div>
