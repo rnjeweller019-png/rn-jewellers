@@ -1,6 +1,9 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'rnj-jewellers-v31';
+const CACHE_NAME = 'rnj-jewellers-v32';
+
+// ⚠️ IMPORTANT: JS files are excluded from cache so config.js is ALWAYS served fresh from network.
+// This ensures the APPS_SCRIPT_URL in config.js is never stale.
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -13,14 +16,12 @@ const ASSETS_TO_CACHE = [
   './contact.html',
   './css/style.css',
   './css/animations.css',
-  './js/config.js',
-  './js/api.js',
-  './js/main.js',
   './assets/logo.png'
+  // JS files intentionally excluded — must always load fresh from network
 ];
 
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Activate new SW immediately
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE).catch(err => console.log('Cache addAll warning:', err));
@@ -29,7 +30,6 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  // Clear old caches completely
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
@@ -38,21 +38,26 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Never cache API calls to Google Apps Script or OneSignal
-  if (e.request.url.includes('script.google.com') || e.request.url.includes('onesignal.com')) {
-    return;
+  const url = e.request.url;
+
+  // NEVER cache: API calls, OneSignal, or ANY JavaScript files
+  if (
+    url.includes('script.google.com') ||
+    url.includes('onesignal.com') ||
+    url.endsWith('.js') ||
+    url.includes('/js/')
+  ) {
+    return; // Let the browser handle JS files directly — no caching
   }
 
   e.respondWith(
     fetch(e.request).then((response) => {
-      // Update cache with fresh network response
       if (response && response.status === 200 && response.type === 'basic') {
         const responseToCache = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(e.request, responseToCache));
       }
       return response;
     }).catch(() => {
-      // Fallback to cache if offline
       return caches.match(e.request);
     })
   );
