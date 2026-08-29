@@ -200,7 +200,7 @@ function renderProductCard(product) {
         <h3 class="product-title">${product.name}</h3>
         <div class="product-meta">
           <span><i class="fas fa-weight-hanging"></i> ${product.weight_g}g</span>
-          <span><i class="fas fa-certificate"></i> BIS Hallmark</span>
+          <span><i class="fas fa-certificate"></i> ${escapeHtml(product.certification || 'BIS 916 Hallmark')}</span>
         </div>
         <div class="product-price-box">
           <span class="price-current">₹${calc.final_price.toLocaleString('en-IN')}</span>
