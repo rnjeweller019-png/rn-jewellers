@@ -1,0 +1,29 @@
+# ─── OS & Editor Files ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# ─── Secrets & Environment ─────────────────────────────────────────────────────
+.env
+.env.local
+*.key
+*.pem
+
+# ─── Node (if applicable) ──────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ─── Admin Panel — NEVER push to a public repo ─────────────────────────────────
+# If using a single public repo, uncomment the line below to hide the admin panel:
+# admin_standalone/
+
+# ─── Apps Script source (local reference only) ─────────────────────────────────
+# apps-script/ is local only — deploy directly via Google Apps Script editor
+apps-script/
+
+# ─── Logs & Caches ─────────────────────────────────────────────────────────────
+*.log
+.cache/

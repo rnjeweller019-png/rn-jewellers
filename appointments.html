@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Showroom Appointment — RN Jewellers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="RN Jewellers Logo" class="logo-img">
+        <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="collections.html" class="nav-link">Collections</a></li>
+        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+        <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
+          <i class="far fa-heart"></i>
+          <span class="badge-count" id="wishlist-count-badge">0</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container" style="max-width:700px;">
+      <div style="text-align:center; margin-bottom:40px;">
+        <span class="section-subtitle">VIP SHOWROOM EXPERIENCE</span>
+        <h1 style="font-size:2.5rem; font-family:var(--font-heading);">Schedule Private Consultation</h1>
+        <p style="color:var(--text-muted);">Book a private session with our senior jewellery consultant for bridal selection & custom design.</p>
+      </div>
+
+      <div style="background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); padding:40px;">
+        <form id="appointment-form">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" id="apt-name" class="form-control" required placeholder="Enter your full name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">WhatsApp / Phone Number *</label>
+            <input type="tel" id="apt-phone" class="form-control" required placeholder="+91 87088 53335">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div class="form-group">
+              <label class="form-label">Preferred Date *</label>
+              <input type="date" id="apt-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Time Slot *</label>
+              <select id="apt-time" class="form-control" required>
+                <option value="11:00 AM">11:00 AM - 01:00 PM</option>
+                <option value="02:00 PM">02:00 PM - 04:00 PM</option>
+                <option value="05:00 PM">05:00 PM - 08:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Specific Interest or Notes</label>
+            <textarea id="apt-notes" class="form-control" placeholder="Tell us if looking for Bridal Set, Gold Ring, Diamond Solitaire etc."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding:15px; margin-top:10px;">
+            <i class="fas fa-paper-plane"></i> Request Showroom Visit Slot
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUCCESS MODAL -->
+  <div id="booking-success-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:var(--surface-1); border:1px solid var(--border-gold); padding:35px; border-radius:var(--radius-lg); max-width:480px; width:90%; text-align:center; box-shadow:var(--gold-glow);">
+      <i class="fas fa-clock" style="font-size:3rem; color:var(--gold-primary); margin-bottom:15px;"></i>
+      <h2 style="font-family:var(--font-brand); color:var(--gold-light); margin-bottom:10px;">Visit Request Received!</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px; line-height:1.6;">
+        Thank you! Your showroom visit request has been submitted. Our team will check the slot availability and <strong>notify you shortly via WhatsApp</strong> with your booking status.
+      </p>
+      <button onclick="document.getElementById('booking-success-modal').style.display='none'" class="btn btn-primary">Understood</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js?v=1.1.1"></script>
+  <script src="js/api.js?v=1.1.1"></script>
+  <script src="js/main.js?v=1.1.1"></script>
+  <script src="js/appointments.js?v=1.1.1"></script>
+  <script src="js/pwa.js?v=1.1.1"></script>
+</body>
+</html>

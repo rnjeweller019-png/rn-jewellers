@@ -1,0 +1,82 @@
+/* RN JEWELLERS — LUXURY MICRO-ANIMATIONS & SHIMMER EFFECTS */
+
+/* Golden Sparkle Glow Animation */
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #c9a84c 0%, #ffffff 50%, #c9a84c 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 4s linear infinite;
+}
+
+.shimmer-btn {
+  background: linear-gradient(90deg, #c9a84c 0%, #f5d77f 30%, #ffffff 50%, #f5d77f 70%, #c9a84c 100%);
+  background-size: 200% auto;
+  animation: goldShimmer 3s linear infinite;
+}
+
+/* Floating Animation */
+@keyframes floatItem {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: floatItem 5s ease-in-out infinite;
+}
+
+/* Pulse Gold Border */
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 15px rgba(201, 168, 76, 0.2); }
+  50% { box-shadow: 0 0 35px rgba(201, 168, 76, 0.6); }
+}
+
+.pulse-gold {
+  animation: pulseGold 3s infinite;
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Spinner Loader */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(201, 168, 76, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--gold-primary);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Gold Particles Canvas Background */
+#particles-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}

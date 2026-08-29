@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RN Jewellers — Luxury Gold & Silver Ornaments</title>
+  <meta name="description" content="Timeless elegance & certified purity gold, diamond, and silver ornaments. Explore our exclusive collections online or visit our showroom.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <!-- FontAwesome & Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+
+  <!-- LIVE RATE TICKER BAR -->
+  <div class="rate-ticker-bar">
+    <div class="container ticker-wrapper">
+      <div class="ticker-items">
+        <span class="ticker-badge">Live Market Rates</span>
+        <span class="ticker-item"><i class="fas fa-coins" style="color:var(--gold-primary);"></i> 22K Gold: <strong id="ticker-gold-22k">₹7,200/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-coins" style="color:#ffffff;"></i> 24K Gold: <strong id="ticker-gold-24k">₹7,850/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-ring" style="color:#c0c0c0;"></i> Silver: <strong id="ticker-silver">₹92/g</strong></span>
+      </div>
+      <div class="ticker-actions">
+        <a href="calculator.html" class="ticker-link"><i class="fas fa-calculator"></i> Price Calculator</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="RN Jewellers Logo" class="logo-img">
+        <div class="brand-text">
+          <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="collections.html" class="nav-link">Collections</a></li>
+        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+        <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="pwa-install-btn" class="btn btn-secondary btn-sm" style="display:none; font-size:0.8rem; padding:6px 12px;">
+          <i class="fas fa-download"></i> Install App
+        </button>
+        <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
+          <i class="far fa-heart"></i>
+          <span class="badge-count" id="wishlist-count-badge">0</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner" id="promo-banner">
+    <span>✨ <strong>Festive Gold Offer:</strong> Special 15% OFF on Making Charges for All Bridal Sets!</span>
+    <button class="promo-close" id="promo-close-btn">&times;</button>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section" style="position:relative; min-height:85vh; display:flex; align-items:center; background:linear-gradient(to right, rgba(8,8,8,0.95), rgba(8,8,8,0.6)), url('assets/images/hero.jpg') center/cover no-repeat; overflow:hidden;">
+    <canvas id="particles-canvas"></canvas>
+    <div class="container" style="position:relative; z-index:2; padding:60px 1.5rem;">
+      <div style="max-width:650px;" class="fade-in-up">
+        <span class="section-subtitle">SINCE 1985 • BIS 916 HALLMARKED</span>
+        <h1 style="font-size:3.5rem; font-family:var(--font-brand); margin:15px 0 20px 0; line-height:1.1;">
+          Crafting <span class="gold-gradient-text">Timeless Luxury</span> For Generations
+        </h1>
+        <p style="font-size:1.1rem; color:var(--text-muted); margin-bottom:35px; line-height:1.7;">
+          Explore our masterfully handcrafted 22K gold, diamond, and pure silver ornaments designed to commemorate life's most precious occasions.
+        </p>
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+          <a href="collections.html" class="btn btn-primary shimmer-btn"><i class="fas fa-gem"></i> Explore Catalog</a>
+          <a href="appointments.html" class="btn btn-secondary"><i class="fas fa-calendar-check"></i> Book Visit</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED COLLECTIONS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">CURATED EXCELLENCE</span>
+        <h2 class="section-title">Featured Jewellery Collections</h2>
+        <p class="section-desc">Hand-picked iconic masterpieces crafted by our master goldsmiths.</p>
+      </div>
+
+      <div class="product-grid" id="featured-products-grid">
+        <!-- Rendered via JS -->
+      </div>
+      
+      <div style="text-align:center; margin-top:40px;">
+        <a href="collections.html" class="btn btn-secondary">View Entire Collection <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OCCASION CATEGORIES GRID -->
+  <section class="section" style="background:var(--surface-1); border-top:1px solid var(--border-dark); border-bottom:1px solid var(--border-dark);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">SHOP BY OCCASION</span>
+        <h2 class="section-title">Celebrate Every Milestone</h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:25px;">
+        <a href="collections.html?category=sets" class="product-card" style="padding:30px; text-align:center;">
+          <i class="fas fa-crown" style="font-size:2.5rem; color:var(--gold-primary); margin-bottom:15px;"></i>
+          <h3 style="margin-bottom:8px;">Bridal & Wedding</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Heavy gold sets & royal heritage pieces</p>
+        </a>
+        <a href="collections.html?category=rings" class="product-card" style="padding:30px; text-align:center;">
+          <i class="fas fa-ring" style="font-size:2.5rem; color:var(--gold-primary); margin-bottom:15px;"></i>
+          <h3 style="margin-bottom:8px;">Engagement Rings</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Diamond & gemstone solitaies</p>
+        </a>
+        <a href="collections.html?category=bangles" class="product-card" style="padding:30px; text-align:center;">
+          <i class="fas fa-circle-notch" style="font-size:2.5rem; color:var(--gold-primary); margin-bottom:15px;"></i>
+          <h3 style="margin-bottom:8px;">Daily Wear & Office</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Lightweight gold chains & bangles</p>
+        </a>
+        <a href="custom-order.html" class="product-card" style="padding:30px; text-align:center;">
+          <i class="fas fa-palette" style="font-size:2.5rem; color:var(--gold-primary); margin-bottom:15px;"></i>
+          <h3 style="margin-bottom:8px;">Bespoke Custom</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Turn your dream design into gold</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE PRICE ESTIMATOR WIDGET -->
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div style="background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); padding:40px; box-shadow:var(--gold-glow);">
+        <div style="text-align:center; margin-bottom:30px;">
+          <span class="section-subtitle">TRANSPARENT PRICING</span>
+          <h2 style="font-size:2rem; font-family:var(--font-heading);">Instant Gold Price Calculator</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+          <div class="form-group">
+            <label class="form-label">Metal</label>
+            <select id="calc-metal" class="form-control">
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purity</label>
+            <select id="calc-purity" class="form-control">
+              <option value="22K">22K Gold (BIS 916)</option>
+              <option value="24K">24K Pure Gold</option>
+              <option value="18K">18K Gold</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Weight (Grams)</label>
+            <input type="number" id="calc-weight" class="form-control" value="10" min="0.1" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Est. Making Charge (₹)</label>
+            <input type="number" id="calc-making" class="form-control" value="2000">
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top:25px; padding-top:20px; border-top:1px solid var(--border-dark);">
+          <div style="font-size:0.9rem; color:var(--text-muted);">Estimated Price Output:</div>
+          <div id="calc-total-result" style="font-size:2.8rem; font-weight:800; color:var(--gold-light); margin:5px 0;">₹74,000</div>
+          <div id="calc-breakdown" style="font-size:0.85rem; color:var(--text-dim);"></div>
+          <a href="custom-order.html" class="btn btn-primary" style="margin-top:20px;"><i class="fas fa-paper-plane"></i> Enquire for Custom Piece</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a href="https://wa.me/918708853335?text=Hello%20RN%20Jewellers,%20I%20have%20an%20enquiry!" target="_blank" class="floating-whatsapp" aria-label="Contact on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="nav-brand" style="margin-bottom:15px;">
+            <img src="assets/logo.png" alt="Logo" class="logo-img">
+            <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+          </div>
+          <p>Crafting timeless gold, diamond, and silver ornaments with purity, integrity, and hallmarked assurance since 1985.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="collections.html">All Collections</a></li>
+            <li><a href="calculator.html">Price Calculator</a></li>
+            <li><a href="appointments.html">Book Appointment</a></li>
+            <li><a href="custom-order.html">Custom Design Request</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Categories</h4>
+          <ul class="footer-links">
+            <li><a href="collections.html?category=rings">Gold Rings</a></li>
+            <li><a href="collections.html?category=necklaces">Necklaces</a></li>
+            <li><a href="collections.html?category=bangles">Bangles & Kadas</a></li>
+            <li><a href="collections.html?category=earrings">Earrings</a></li>
+            <li><a href="collections.html?category=sets">Bridal Sets</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Our Showroom</h4>
+          <div class="footer-contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Main Market, Jewellers Hub, City, India</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fas fa-phone-alt"></i>
+            <span>+91 87088 53335</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fas fa-clock"></i>
+            <span>Mon - Sat: 10:30 AM - 8:30 PM</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 RN Jewellers. All Rights Reserved.</div>
+        <div>BIS Hallmark 916 Guaranteed Purity.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js?v=1.1.2"></script>
+  <script src="js/api.js?v=1.1.2"></script>
+  <script src="js/main.js?v=1.1.2"></script>
+  <script src="js/calculator.js?v=1.1.2"></script>
+  <script src="js/pwa.js?v=1.1.2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('featured-products-grid');
+      if (grid) {
+        const products = API.getProducts().slice(0, 4);
+        grid.innerHTML = products.map(renderProductCard).join('');
+      }
+    });
+  </script>
+</body>
+</html>

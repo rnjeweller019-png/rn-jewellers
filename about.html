@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — RN Jewellers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="RN Jewellers Logo" class="logo-img">
+        <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="collections.html" class="nav-link">Collections</a></li>
+        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+        <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
+        <li><a href="about.html" class="nav-link active">About Us</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
+          <i class="far fa-heart"></i>
+          <span class="badge-count" id="wishlist-count-badge">0</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; max-width:800px; margin:0 auto 60px auto;">
+        <span class="section-subtitle">OUR LEGACY & PURITY</span>
+        <h1 style="font-size:3rem; font-family:var(--font-heading); margin-bottom:20px;">Four Decades of Trust & Perfection</h1>
+        <p style="font-size:1.1rem; color:var(--text-muted); line-height:1.8;">
+          Founded in 1985, RN Jewellers has grown to become the hallmark of trust, purity, and craftsmanship. Every piece of gold, silver, and diamond ornament passing through our showroom carries 100% BIS certification and our family commitment to quality.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:30px; margin-bottom:60px;">
+        <div style="background:var(--surface-1); border:1px solid var(--border-gold); padding:35px; border-radius:var(--radius-md); text-align:center;">
+          <i class="fas fa-certificate" style="font-size:3rem; color:var(--gold-primary); margin-bottom:20px;"></i>
+          <h3 style="margin-bottom:12px;">100% BIS Hallmarked</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Every gold piece is certified with official government 916 BIS hallmark laser engraving.</p>
+        </div>
+        <div style="background:var(--surface-1); border:1px solid var(--border-gold); padding:35px; border-radius:var(--radius-md); text-align:center;">
+          <i class="fas fa-gem" style="font-size:3rem; color:var(--gold-primary); margin-bottom:20px;"></i>
+          <h3 style="margin-bottom:12px;">Master Artisans</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Traditional Karigars with over 30 years experience handcrafted each complex bridal piece.</p>
+        </div>
+        <div style="background:var(--surface-1); border:1px solid var(--border-gold); padding:35px; border-radius:var(--radius-md); text-align:center;">
+          <i class="fas fa-hand-holding-heart" style="font-size:3rem; color:var(--gold-primary); margin-bottom:20px;"></i>
+          <h3 style="margin-bottom:12px;">100% Buyback Assurance</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Guaranteed full market rate buyback and exchange policies on all gold ornaments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js?v=1.1.1"></script>
+  <script src="js/api.js?v=1.1.1"></script>
+  <script src="js/main.js?v=1.1.1"></script>
+  <script src="js/pwa.js?v=1.1.1"></script>
+</body>
+</html>

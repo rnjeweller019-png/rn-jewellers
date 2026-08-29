@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jewellery Collections — RN Jewellers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+
+  <!-- RATE TICKER -->
+  <div class="rate-ticker-bar">
+    <div class="container ticker-wrapper">
+      <div class="ticker-items">
+        <span class="ticker-badge">Live Market Rates</span>
+        <span class="ticker-item"><i class="fas fa-coins"></i> 22K Gold: <strong id="ticker-gold-22k">₹7,200/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-coins"></i> 24K Gold: <strong id="ticker-gold-24k">₹7,850/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-ring"></i> Silver: <strong id="ticker-silver">₹92/g</strong></span>
+      </div>
+      <div class="ticker-actions">
+        <a href="calculator.html" class="ticker-link"><i class="fas fa-calculator"></i> Price Calculator</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="RN Jewellers Logo" class="logo-img">
+        <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="collections.html" class="nav-link active">Collections</a></li>
+        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+        <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
+          <i class="far fa-heart"></i>
+          <span class="badge-count" id="wishlist-count-badge">0</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <section style="background:var(--surface-1); border-bottom:1px solid var(--border-dark); padding:40px 0;">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+      <div>
+        <h1 style="font-size:2.2rem;">Jewellery Catalog & Collections</h1>
+        <p style="color:var(--text-muted);">Discover BIS 916 hallmarked handcrafted luxury pieces.</p>
+      </div>
+      <div id="product-count" style="background:var(--surface-2); border:1px solid var(--border-gold); padding:8px 16px; border-radius:var(--radius-full); font-weight:600; color:var(--gold-light);">
+        Loading items...
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG MAIN CONTENT -->
+  <section class="section">
+    <div class="container">
+      <!-- FILTERS BAR -->
+      <div style="background:var(--surface-1); border:1px solid var(--border-dark); padding:20px; border-radius:var(--radius-md); margin-bottom:35px; display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; align-items:center;">
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Search Catalog</label>
+          <input type="text" id="catalog-search" class="form-control" placeholder="Search ring, necklace...">
+        </div>
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Category</label>
+          <select id="filter-category" class="form-control">
+            <option value="all">All Categories</option>
+            <option value="rings">Rings</option>
+            <option value="necklaces">Necklaces</option>
+            <option value="earrings">Earrings</option>
+            <option value="bangles">Bangles & Kadas</option>
+            <option value="sets">Bridal Sets</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Metal</label>
+          <select id="filter-metal" class="form-control">
+            <option value="all">All Metals</option>
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Sort By</label>
+          <select id="filter-sort" class="form-control">
+            <option value="featured">Featured First</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="newest">New Arrivals</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PRODUCTS GRID -->
+      <div class="product-grid" id="collections-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a href="https://wa.me/918708853335" target="_blank" class="floating-whatsapp" aria-label="Contact on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js?v=1.1.1"></script>
+  <script src="js/api.js?v=1.1.1"></script>
+  <script src="js/main.js?v=1.1.1"></script>
+  <script src="js/products.js?v=1.1.1"></script>
+  <script src="js/pwa.js?v=1.1.1"></script>
+</body>
+</html>

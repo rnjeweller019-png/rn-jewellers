@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Wishlist — RN Jewellers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="RN Jewellers Logo" class="logo-img">
+        <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="collections.html" class="nav-link">Collections</a></li>
+        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+        <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
+          <i class="fas fa-heart" style="color:var(--gold-primary);"></i>
+          <span class="badge-count" id="wishlist-count-badge">0</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; margin-bottom:40px; padding-bottom:20px; border-bottom:1px solid var(--border-dark);">
+        <div>
+          <h1 style="font-size:2.2rem; font-family:var(--font-heading);">Your Saved Favourites</h1>
+          <p style="color:var(--text-muted);">Jewellery pieces saved for your upcoming occasion.</p>
+        </div>
+        <button id="share-wishlist-btn" class="btn btn-whatsapp" style="display:none;">
+          <i class="fab fa-whatsapp"></i> Share Wishlist on WhatsApp
+        </button>
+      </div>
+
+      <div class="product-grid" id="wishlist-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js?v=1.1.1"></script>
+  <script src="js/api.js?v=1.1.1"></script>
+  <script src="js/main.js?v=1.1.1"></script>
+  <script src="js/wishlist.js?v=1.1.1"></script>
+  <script src="js/pwa.js?v=1.1.1"></script>
+</body>
+</html>
