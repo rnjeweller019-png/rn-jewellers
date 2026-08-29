@@ -127,20 +127,33 @@ if (onesignalAppId) {
 
 // Global helper to manually trigger push prompt on button/icon click
 window.triggerPushPrompt = function() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
       try {
         if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-          await OneSignal.Slidedown.promptPush();
+          await OneSignal.Slidedown.promptPush({ force: true });
         } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
           await OneSignal.Notifications.requestPermission();
         }
       } catch(e) {
-        if (typeof Notification !== 'undefined') Notification.requestPermission();
+        if (typeof Notification !== 'undefined') {
+          Notification.requestPermission();
+        }
       }
     });
   } else if (typeof Notification !== 'undefined') {
     Notification.requestPermission();
+  }
+
+  // iOS Safari PWA guidance if native push is restricted by Apple
+  if (isIOS && !window.navigator.standalone) {
+    setTimeout(() => {
+      if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+        alert("📲 To enable Push Alerts on iPhone Safari:\n\n1. Tap the Share button 📤 (bottom bar)\n2. Tap 'Add to Home Screen' ➕\n3. Open RN Jewellers from your Home Screen & tap Allow!");
+      }
+    }, 1500);
   }
 };
 
