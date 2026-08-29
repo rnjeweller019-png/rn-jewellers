@@ -219,7 +219,7 @@ function toggleWishlistClick(id, btn) {
   initWishlistBadge();
 }
 
-// Smart Visitor Analytics (10s Dwell Time + 5min Session Cooldown)
+// Smart Visitor Analytics (10s Dwell Time + 5min Session Cooldown + Rich Regional Insights)
 function logVisitorAnalytics() {
   if (!CONFIG.APPS_SCRIPT_URL) return;
 
@@ -239,11 +239,26 @@ function logVisitorAnalytics() {
 
     if (currentNow - currentLastLog >= FIVE_MIN_MS) {
       localStorage.setItem('rnj_last_visit_logged_time', currentNow.toString());
+      
       const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
+      const isTablet = /iPad|Tablet/i.test(navigator.userAgent);
+      const deviceType = isTablet ? 'Tablet' : (isMobile ? 'Mobile' : 'Desktop');
+      
+      let userTimezone = 'Asia/Kolkata';
+      try {
+        userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
+      } catch(e) {}
+
+      const userLang = navigator.language || 'en-US';
+      const screenSize = `${window.screen.width}x${window.screen.height}`;
+
       const payload = encodeURIComponent(JSON.stringify({
         page: window.location.pathname || 'index.html',
-        device: isMobile ? 'Mobile' : 'Desktop',
-        referrer: document.referrer || 'Direct'
+        device: deviceType,
+        referrer: document.referrer || 'Direct',
+        timezone: userTimezone,
+        language: userLang,
+        screen: screenSize
       }));
       fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => {});
     }
