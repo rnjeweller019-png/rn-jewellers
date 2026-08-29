@@ -116,6 +116,24 @@ if (onesignalAppId) {
 window.triggerPushPrompt = function() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
+  // 1. SYNCHRONOUS WebKit Permission Request (Mandatory for iOS Safari & PWA)
+  if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+    try {
+      Notification.requestPermission().then(function(perm) {
+        if (perm === 'granted' && typeof OneSignalDeferred !== 'undefined') {
+          OneSignalDeferred.push(function(OneSignal) {
+            try {
+              if (OneSignal.User && OneSignal.User.PushSubscription) {
+                OneSignal.User.PushSubscription.optIn();
+              }
+            } catch(e) {}
+          });
+        }
+      }).catch(function() {});
+    } catch(e) {}
+  }
+
+  // 2. OneSignal SDK Slidedown trigger
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
       try {
@@ -124,19 +142,61 @@ window.triggerPushPrompt = function() {
         } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
           await OneSignal.Notifications.requestPermission();
         }
-      } catch(e) {
-        if (typeof Notification !== 'undefined') Notification.requestPermission();
-      }
+      } catch(e) {}
     });
-  } else if (typeof Notification !== 'undefined') {
-    Notification.requestPermission();
   }
 
-  // iOS Safari PWA guidance overlay if native push is restricted by Apple
+  // 3. iOS Safari Banner guidance if opened in browser tab (not Home Screen PWA)
   if (isIOS && !window.navigator.standalone) {
     showIOSPWABanner();
   }
 };
+
+// Elegant iOS PWA Floating Push Bell Button (Guarantees Sync User Gesture on iPhone)
+function initIOSFloatingBell() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (!isIOS) return;
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') return;
+  if (document.getElementById('rnj-ios-floating-bell')) return;
+
+  const bell = document.createElement('button');
+  bell.id = 'rnj-ios-floating-bell';
+  bell.innerHTML = '<i class="fas fa-bell"></i> <span>Enable Push Alerts</span>';
+  bell.style.cssText = `
+    position: fixed;
+    bottom: 25px;
+    right: 20px;
+    z-index: 9999999;
+    background: linear-gradient(135deg, #c9a84c, #e6ca65);
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 8px 25px rgba(201, 168, 76, 0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+  `;
+
+  bell.onclick = function() {
+    window.triggerPushPrompt();
+    bell.style.display = 'none';
+  };
+
+  if (document.body) {
+    document.body.appendChild(bell);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(initIOSFloatingBell, 1000));
+} else {
+  setTimeout(initIOSFloatingBell, 1000);
+}
 
 // Elegant iOS PWA Banner Guidance for iPhone Safari
 function showIOSPWABanner() {
@@ -151,7 +211,7 @@ function showIOSPWABanner() {
     <div style="font-size:0.82rem; color:#ddd; line-height:1.5;">
       1. Tap the <strong>Share button</strong> <i class="fas fa-share-square" style="color:#3498db;"></i> (bottom bar)<br>
       2. Tap <strong>"Add to Home Screen"</strong> <i class="fas fa-plus-square" style="color:#2ecc71;"></i><br>
-      3. Open RN Jewellers from Home Screen &amp; tap <strong>Subscribe</strong>!
+      3. Open RN Jewellers from Home Screen &amp; tap <strong>Enable Push Alerts</strong>!
     </div>
   `;
   banner.style.cssText = `
