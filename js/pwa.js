@@ -75,6 +75,20 @@ if (onesignalAppId) {
         }
       });
 
+      // Auto-log subscriber to Google Sheets Subscribers tab
+      try {
+        OneSignal.User.PushSubscription.addEventListener('change', function(event) {
+          if (event.current && event.current.optedIn && event.current.id) {
+            logSubscriberToServer(event.current.id);
+          }
+        });
+        const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
+        const subId = OneSignal.User.PushSubscription.id;
+        if (isOptedIn && subId) {
+          logSubscriberToServer(subId);
+        }
+      } catch(e) {}
+
       // Only prompt once per browser — check if already asked
       const alreadyAsked = localStorage.getItem('rnj_push_asked');
       if (!alreadyAsked) {
@@ -98,4 +112,26 @@ if (onesignalAppId) {
       console.log('OneSignal init notice:', err);
     }
   });
+}
+
+function logSubscriberToServer(subscriptionId) {
+  if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
+  const loggedKey = 'rnj_sub_logged_' + subscriptionId;
+  if (localStorage.getItem(loggedKey)) return;
+
+  const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
+  const device = isMobile ? 'Mobile' : 'Desktop';
+  const tz = (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ? (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata') : 'Asia/Kolkata';
+
+  const params = new URLSearchParams({
+    action: 'logSubscriber',
+    'data[subscription_id]': subscriptionId,
+    'data[device]': device,
+    'data[timezone]': tz,
+    'data[browser]': navigator.userAgent
+  });
+
+  fetch(`${CONFIG.APPS_SCRIPT_URL}?${params.toString()}`)
+    .then(() => localStorage.setItem(loggedKey, '1'))
+    .catch(() => {});
 }
