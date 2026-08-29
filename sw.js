@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v2';
+const CACHE_NAME = 'rnj-jewellers-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -27,7 +27,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  // Clear old caches
+  // Clear old caches completely
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
@@ -36,6 +36,11 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // Never cache API calls to Google Apps Script or OneSignal
+  if (e.request.url.includes('script.google.com') || e.request.url.includes('onesignal.com')) {
+    return;
+  }
+
   e.respondWith(
     fetch(e.request).then((response) => {
       // Update cache with fresh network response
