@@ -77,26 +77,46 @@ if (onesignalAppId) {
 
       // Auto-log subscriber to Google Sheets Subscribers tab
       try {
-        OneSignal.User.PushSubscription.addEventListener('change', function(event) {
-          if (event.current && event.current.optedIn && event.current.id) {
-            logSubscriberToServer(event.current.id);
-          }
-        });
-
-        // Poll until OneSignal finishes loading subscription ID
-        let attempts = 0;
-        const checkSubInterval = setInterval(async () => {
-          attempts++;
+        const tryLogCurrentSub = () => {
           try {
-            const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
-            const subId = OneSignal.User.PushSubscription.id;
+            const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
+            const subId = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.id;
             if (isOptedIn && subId) {
               logSubscriberToServer(subId);
-              clearInterval(checkSubInterval);
+              return true;
             }
           } catch(e) {}
-          if (attempts > 15) clearInterval(checkSubInterval);
-        }, 1000);
+          return false;
+        };
+
+        // 1. Listen for subscription changes
+        if (OneSignal.User && OneSignal.User.PushSubscription) {
+          OneSignal.User.PushSubscription.addEventListener('change', function(event) {
+            if (event.current && event.current.optedIn && event.current.id) {
+              logSubscriberToServer(event.current.id);
+            }
+          });
+        }
+
+        // 2. Listen for permission prompt approval
+        if (OneSignal.Notifications) {
+          OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
+            if (permission) {
+              setTimeout(tryLogCurrentSub, 2000);
+              setTimeout(tryLogCurrentSub, 5000);
+            }
+          });
+        }
+
+        // 3. Extended polling check (polls every 2 seconds for up to 60 seconds)
+        let attempts = 0;
+        const checkSubInterval = setInterval(() => {
+          attempts++;
+          const logged = tryLogCurrentSub();
+          if (logged || attempts > 30) {
+            clearInterval(checkSubInterval);
+          }
+        }, 2000);
       } catch(e) {}
 
     } catch(err) {
