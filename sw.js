@@ -1,6 +1,6 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'rnj-jewellers-v28';
+const CACHE_NAME = 'rnj-jewellers-v29';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
