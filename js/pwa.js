@@ -46,6 +46,10 @@ if (onesignalAppId) {
       await OneSignal.init({
         appId: onesignalAppId,
         safari_web_id: 'web.onesignal.auto.2c31ff0c-1624-4aec-8f89-a4f0b1da0ea1',
+        // CRITICAL: Tell OneSignal exactly where our Service Worker lives
+        // Our site is in a GitHub Pages subfolder /rn-jewellers/ not the root
+        serviceWorkerPath: '/rn-jewellers/OneSignalSDKWorker.js',
+        serviceWorkerParam: { scope: '/rn-jewellers/' },
         notifyButton: {
           enable: true,
           size: 'medium',

@@ -1,9 +1,4 @@
-importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
-
 const CACHE_NAME = 'rnj-jewellers-v32';
-
-// ⚠️ IMPORTANT: JS files are excluded from cache so config.js is ALWAYS served fresh from network.
-// This ensures the APPS_SCRIPT_URL in config.js is never stale.
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -17,11 +12,12 @@ const ASSETS_TO_CACHE = [
   './css/style.css',
   './css/animations.css',
   './assets/logo.png'
-  // JS files intentionally excluded — must always load fresh from network
+  // NOTE: JS files (config.js, pwa.js, api.js) are intentionally NOT cached
+  // so browsers always fetch the latest code from the server
 ];
 
 self.addEventListener('install', (e) => {
-  self.skipWaiting();
+  self.skipWaiting(); // Activate new SW immediately
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE).catch(err => console.log('Cache addAll warning:', err));
@@ -30,6 +26,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
+  // Clear ALL old caches on activation
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
@@ -38,16 +35,15 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // NEVER cache: API calls, OneSignal, JS files, config files
   const url = e.request.url;
-
-  // NEVER cache: API calls, OneSignal, or ANY JavaScript files
   if (
     url.includes('script.google.com') ||
     url.includes('onesignal.com') ||
     url.endsWith('.js') ||
     url.includes('/js/')
   ) {
-    return; // Let the browser handle JS files directly — no caching
+    return; // Always fetch fresh from network
   }
 
   e.respondWith(
