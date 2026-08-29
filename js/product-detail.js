@@ -57,7 +57,7 @@ function initProductDetailPage() {
               <div style="display:flex; justify-content:space-between;"><span>Gold Weight:</span><strong>${product.weight_g} grams</strong></div>
               <div style="display:flex; justify-content:space-between;"><span>Current ${product.purity} Gold Rate:</span><strong>₹${calc.metal_rate.toLocaleString('en-IN')}/g</strong></div>
               <div style="display:flex; justify-content:space-between;"><span>Net Gold Cost (${product.weight_g}g × ₹${calc.metal_rate.toLocaleString('en-IN')}):</span><strong>₹${calc.raw_metal_cost.toLocaleString('en-IN')}</strong></div>
-              <div style="display:flex; justify-content:space-between;"><span>Making Charge:</span><strong>+ ₹${calc.making_charge.toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>Making Charge (${calc.making_text}):</span><strong style="${calc.is_free_making ? 'color:#2ecc71;' : ''}">${calc.is_free_making ? 'FREE (0% Making)' : '+ ₹' + calc.making_amount.toLocaleString('en-IN') + ' (' + calc.making_text + ')'}</strong></div>
               ${calc.discount_amount > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--success);"><span>Discount Applied (${calc.discount_percent}%):</span><strong>− ₹${calc.discount_amount.toLocaleString('en-IN')}</strong></div>` : ''}
               <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-dark); padding-top:8px; color:var(--text-main); font-weight:700;"><span>Total Final Price:</span><strong style="color:var(--gold-light);">₹${calc.final_price.toLocaleString('en-IN')}</strong></div>
             </div>

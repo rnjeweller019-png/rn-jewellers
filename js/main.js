@@ -182,6 +182,7 @@ function renderProductCard(product) {
         <div class="product-badges">
           ${product.is_featured ? '<span class="badge badge-featured">Featured</span>' : ''}
           ${product.is_new_arrival ? '<span class="badge badge-new">New</span>' : ''}
+          ${calc.is_free_making ? '<span class="badge" style="background:#2ecc71; color:#0a0a0a; font-weight:700;">0% Making</span>' : ''}
           ${calc.discount_percent > 0 ? `<span class="badge badge-discount">${calc.discount_percent}% OFF</span>` : ''}
         </div>
         <button class="product-wishlist-btn ${isWishlisted ? 'active' : ''}" onclick="event.preventDefault(); toggleWishlistClick('${product.id}', this)">
