@@ -1,7 +1,8 @@
 {
   "name": "RN Jewellers",
   "short_name": "RN Jewellers",
-  "start_url": "/",
+  "start_url": "/rn-jewellers/index.html",
+  "scope": "/rn-jewellers/",
   "display": "standalone",
   "background_color": "#080808",
   "theme_color": "#c9a84c",
