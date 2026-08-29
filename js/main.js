@@ -29,19 +29,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Helper: Get Featured Products (prioritizes is_featured: true, fallback to top products)
 function getFeaturedProducts() {
   const allProducts = API.getProducts();
-  const featured = allProducts.filter(p => p.is_featured === true || String(p.is_featured).toLowerCase() === 'true');
-  if (featured.length >= 4) {
-    return featured.slice(0, 4);
+  if (!allProducts || allProducts.length === 0) {
+    return [];
   }
-  const remaining = allProducts.filter(p => !(p.is_featured === true || String(p.is_featured).toLowerCase() === 'true'));
-  return [...featured, ...remaining].slice(0, 4);
+  const featured = allProducts.filter(p => p.is_featured === true || String(p.is_featured).toLowerCase() === 'true');
+  if (featured.length > 0) {
+    return featured;
+  }
+  return allProducts;
 }
 
 function refreshPageContentsSilently() {
   const featuredGrid = document.getElementById('featured-products-grid');
   if (featuredGrid && typeof renderProductCard === 'function') {
     const products = getFeaturedProducts();
-    featuredGrid.innerHTML = products.map(renderProductCard).join('');
+    if (products.length === 0) {
+      featuredGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No products available in catalog.</div>';
+    } else {
+      featuredGrid.innerHTML = products.map(renderProductCard).join('');
+    }
   }
 
   if (typeof window.refreshCollectionsGrid === 'function') {

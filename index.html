@@ -204,7 +204,11 @@
       const grid = document.getElementById('featured-products-grid');
       if (grid && typeof getFeaturedProducts === 'function') {
         const products = getFeaturedProducts();
-        grid.innerHTML = products.map(renderProductCard).join('');
+        if (products.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No products available in catalog.</div>';
+        } else {
+          grid.innerHTML = products.map(renderProductCard).join('');
+        }
       }
     });
   </script>
