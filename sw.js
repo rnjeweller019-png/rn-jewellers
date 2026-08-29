@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v8';
+const CACHE_NAME = 'rnj-jewellers-v9';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -69,11 +69,11 @@ self.addEventListener('push', (e) => {
 
   const options = {
     body: data.body || data.message || 'Check out our latest jewellery collection!',
-    icon: '/rn-jewellers/assets/logo.png',
-    badge: '/rn-jewellers/assets/logo.png',
+    icon: './assets/logo.png',
+    badge: './assets/logo.png',
     tag: 'rnj-notification',
     requireInteraction: true,
-    data: { url: data.url || '/rn-jewellers/' }
+    data: { url: data.url || './' }
   };
 
   e.waitUntil(self.registration.showNotification(data.title || '✨ RN Jewellers', options));
@@ -82,11 +82,11 @@ self.addEventListener('push', (e) => {
 // ─── NOTIFICATION CLICK HANDLER ─────────────────────────────────────────────
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const targetUrl = (e.notification.data && e.notification.data.url) || '/rn-jewellers/';
+  const targetUrl = (e.notification.data && e.notification.data.url) || './';
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
       for (let client of windowClients) {
-        if (client.url.includes('rn-jewellers') && 'focus' in client) {
+        if ('focus' in client) {
           return client.focus();
         }
       }
