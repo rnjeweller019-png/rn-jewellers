@@ -34,7 +34,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   }
 });
 
-// ─── ONESIGNAL PUSH NOTIFICATIONS ───────────────────────────────────────────
+// ─── ONESIGNAL PUSH NOTIFICATIONS ENGINE ─────────────────────────────────────
 const onesignalAppId = (typeof CONFIG !== 'undefined' && CONFIG.ONESIGNAL_APP_ID && CONFIG.ONESIGNAL_APP_ID.trim())
   ? CONFIG.ONESIGNAL_APP_ID.trim()
   : '91a28970-9e1b-4343-a379-de2a1923e7a7';
@@ -60,10 +60,9 @@ if (onesignalAppId) {
           title: '✨ RN Jewellers',
           message: 'Thanks for subscribing! You will get exclusive offers & new arrivals first.'
         }
-        // NOTE: No promptOptions/autoPrompt here — notifyButton handles everything
       });
 
-      // Log subscriber after init — delay to let OneSignal finish registration
+      // Helper function to check & log active subscriber ID to Google Sheets
       const tryLogCurrentSub = async () => {
         try {
           const isOptedIn = OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.optedIn;
@@ -76,31 +75,30 @@ if (onesignalAppId) {
         return false;
       };
 
-      // 1. Fire immediately (for returning already-subscribed visitors)
+      // 1. Initial check after load
       setTimeout(tryLogCurrentSub, 3000);
 
-      // 2. Listen for subscription changes (fires when user clicks Subscribe)
+      // 2. Listen for push subscription changes (when user clicks Subscribe)
       if (OneSignal.User && OneSignal.User.PushSubscription) {
         OneSignal.User.PushSubscription.addEventListener('change', async function(event) {
           if (event.current && event.current.optedIn && event.current.id) {
-            // Wait 3s for Apple/Google to fully confirm subscription
-            setTimeout(() => logSubscriberToServer(event.current.id), 3000);
-            setTimeout(() => logSubscriberToServer(event.current.id), 7000);
+            setTimeout(() => logSubscriberToServer(event.current.id), 2000);
+            setTimeout(() => logSubscriberToServer(event.current.id), 6000);
           }
         });
       }
 
-      // 3. Listen for permission approval (iOS PWA)
+      // 3. Listen for browser permission approval
       if (OneSignal.Notifications) {
         OneSignal.Notifications.addEventListener('permissionChange', async function(permission) {
           if (permission) {
-            setTimeout(tryLogCurrentSub, 3000);
-            setTimeout(tryLogCurrentSub, 8000);
+            setTimeout(tryLogCurrentSub, 2000);
+            setTimeout(tryLogCurrentSub, 6000);
           }
         });
       }
 
-      // 4. Polling fallback every 3s for up to 60s
+      // 4. Background polling check (polls every 3s for up to 60s)
       let attempts = 0;
       const checkSubInterval = setInterval(async () => {
         attempts++;
@@ -114,7 +112,7 @@ if (onesignalAppId) {
   });
 }
 
-// Global helper to manually trigger push prompt on button/icon click
+// ─── USER GESTURE PROMPT TRIGGER & PLATFORM HANDLING ───────────────────────
 window.triggerPushPrompt = function() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -127,69 +125,87 @@ window.triggerPushPrompt = function() {
           await OneSignal.Notifications.requestPermission();
         }
       } catch(e) {
-        if (typeof Notification !== 'undefined') {
-          Notification.requestPermission();
-        }
+        if (typeof Notification !== 'undefined') Notification.requestPermission();
       }
     });
   } else if (typeof Notification !== 'undefined') {
     Notification.requestPermission();
   }
 
-  // iOS Safari PWA guidance if native push is restricted by Apple
+  // iOS Safari PWA guidance overlay if native push is restricted by Apple
   if (isIOS && !window.navigator.standalone) {
-    setTimeout(() => {
-      if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
-        alert("📲 To enable Push Alerts on iPhone Safari:\n\n1. Tap the Share button 📤 (bottom bar)\n2. Tap 'Add to Home Screen' ➕\n3. Open RN Jewellers from your Home Screen & tap Allow!");
-      }
-    }, 1500);
+    showIOSPWABanner();
   }
 };
 
-// Floating Push Bell Button — Required for iPhone Safari User-Gesture Compliance
-function initPushBellWidget() {
-  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') return;
-  if (document.getElementById('rnj-floating-push-bell')) return;
-
-  const bell = document.createElement('button');
-  bell.id = 'rnj-floating-push-bell';
-  bell.innerHTML = '<i class="fas fa-bell"></i> <span>Enable Push Alerts</span>';
-  bell.style.cssText = `
+// Elegant iOS PWA Banner Guidance for iPhone Safari
+function showIOSPWABanner() {
+  if (document.getElementById('rnj-ios-pwa-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'rnj-ios-pwa-banner';
+  banner.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+      <div style="font-weight:700; font-size:0.92rem; color:#c9a84c;">📲 Enable Push Alerts on iPhone</div>
+      <button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#888; font-size:1.1rem; cursor:pointer;">&times;</button>
+    </div>
+    <div style="font-size:0.82rem; color:#ddd; line-height:1.5;">
+      1. Tap the <strong>Share button</strong> <i class="fas fa-share-square" style="color:#3498db;"></i> (bottom bar)<br>
+      2. Tap <strong>"Add to Home Screen"</strong> <i class="fas fa-plus-square" style="color:#2ecc71;"></i><br>
+      3. Open RN Jewellers from Home Screen &amp; tap <strong>Subscribe</strong>!
+    </div>
+  `;
+  banner.style.cssText = `
     position: fixed;
-    bottom: 25px;
+    bottom: 20px;
+    left: 20px;
     right: 20px;
     z-index: 999999;
-    background: linear-gradient(135deg, #c9a84c, #e6ca65);
-    color: #000;
-    border: none;
-    padding: 12px 18px;
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(201, 168, 76, 0.6);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+  `;
+  document.body.appendChild(banner);
+}
+
+// ─── SUBSCRIBER CONFIRMATION TOAST ──────────────────────────────────────────
+function showSubscriptionToast(message) {
+  if (document.getElementById('rnj-sub-toast')) return;
+  const toast = document.createElement('div');
+  toast.id = 'rnj-sub-toast';
+  toast.innerHTML = `<i class="fas fa-check-circle" style="color:#2ecc71; font-size:1.15rem;"></i> <span>${message}</span>`;
+  toast.style.cssText = `
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999999;
+    background: rgba(18, 18, 18, 0.95);
+    color: #ffffff;
+    border: 1px solid #c9a84c;
+    padding: 12px 24px;
     border-radius: 30px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    box-shadow: 0 8px 25px rgba(201, 168, 76, 0.5);
-    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    font-size: 0.88rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: inherit;
+    gap: 10px;
+    backdrop-filter: blur(10px);
   `;
-
-  bell.onclick = function() {
-    window.triggerPushPrompt();
-    bell.style.display = 'none';
-  };
-
-  if (document.body) {
-    document.body.appendChild(bell);
-  }
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.transition = 'all 0.4s ease';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translate(-50%, -20px)';
+    setTimeout(() => toast.remove(), 400);
+  }, 4500);
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => setTimeout(initPushBellWidget, 1500));
-} else {
-  setTimeout(initPushBellWidget, 1500);
-}
-
+// ─── SERVER LOGGING (IMAGE BEACON + FETCH DUAL STRATEGY) ─────────────────────
 function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
 
@@ -201,19 +217,26 @@ function logSubscriberToServer(subscriptionId) {
     subscription_id: subscriptionId,
     device: device,
     timezone: tz,
-    browser: navigator.userAgent.substring(0, 200) // trim to avoid URL length limits
+    browser: navigator.userAgent.substring(0, 200)
   }));
 
   const url = `${CONFIG.APPS_SCRIPT_URL}?action=logSubscriber&data=${payload}&_t=${Date.now()}`;
 
-  // Strategy 1: Image beacon (no CORS, works everywhere)
+  // Fire Image beacon (CORS-free, instant execution)
   try {
     const img = new Image();
     img.src = url;
   } catch(e) {}
 
-  // Strategy 2: fetch as backup (in case Image beacon fails silently)
+  // Fire fetch backup
   try {
     fetch(url, { mode: 'no-cors' }).catch(() => {});
   } catch(e) {}
+
+  // Trigger one-time confirmation toast to user
+  const toastKey = 'rnj_sub_toast_done_' + subscriptionId;
+  if (!localStorage.getItem(toastKey)) {
+    localStorage.setItem(toastKey, '1');
+    showSubscriptionToast('✨ You are subscribed! You will receive exclusive offers & new arrivals first.');
+  }
 }
