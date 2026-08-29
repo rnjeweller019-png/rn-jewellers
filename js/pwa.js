@@ -130,10 +130,10 @@ window.triggerPushPrompt = function() {
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
       try {
-        if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-          await OneSignal.Notifications.requestPermission();
-        } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+        if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
           await OneSignal.Slidedown.promptPush();
+        } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+          await OneSignal.Notifications.requestPermission();
         }
       } catch(e) {
         if (typeof Notification !== 'undefined') Notification.requestPermission();
@@ -143,6 +143,50 @@ window.triggerPushPrompt = function() {
     Notification.requestPermission();
   }
 };
+
+// Floating Push Bell Button — Required for iPhone Safari User-Gesture Compliance
+function initPushBellWidget() {
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') return;
+  if (document.getElementById('rnj-floating-push-bell')) return;
+
+  const bell = document.createElement('button');
+  bell.id = 'rnj-floating-push-bell';
+  bell.innerHTML = '<i class="fas fa-bell"></i> <span>Enable Push Alerts</span>';
+  bell.style.cssText = `
+    position: fixed;
+    bottom: 25px;
+    right: 20px;
+    z-index: 999999;
+    background: linear-gradient(135deg, #c9a84c, #e6ca65);
+    color: #000;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 8px 25px rgba(201, 168, 76, 0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+  `;
+
+  bell.onclick = function() {
+    window.triggerPushPrompt();
+    bell.style.display = 'none';
+  };
+
+  if (document.body) {
+    document.body.appendChild(bell);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(initPushBellWidget, 1500));
+} else {
+  setTimeout(initPushBellWidget, 1500);
+}
 
 function logSubscriberToServer(subscriptionId) {
   if (typeof CONFIG === 'undefined' || !CONFIG.APPS_SCRIPT_URL || !subscriptionId) return;
