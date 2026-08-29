@@ -82,11 +82,21 @@ if (onesignalAppId) {
             logSubscriberToServer(event.current.id);
           }
         });
-        const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
-        const subId = OneSignal.User.PushSubscription.id;
-        if (isOptedIn && subId) {
-          logSubscriberToServer(subId);
-        }
+
+        // Poll until OneSignal finishes loading subscription ID
+        let attempts = 0;
+        const checkSubInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const isOptedIn = await OneSignal.User.PushSubscription.optedIn;
+            const subId = OneSignal.User.PushSubscription.id;
+            if (isOptedIn && subId) {
+              logSubscriberToServer(subId);
+              clearInterval(checkSubInterval);
+            }
+          } catch(e) {}
+          if (attempts > 10) clearInterval(checkSubInterval);
+        }, 1000);
       } catch(e) {}
 
       // Auto-prompt logic — prompts if permission is not yet granted
