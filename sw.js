@@ -5,7 +5,6 @@ const ASSETS_TO_CACHE = [
   './collections.html',
   './product.html',
   './wishlist.html',
-  './calculator.html',
   './appointments.html',
   './custom-order.html',
   './about.html',

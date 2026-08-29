@@ -26,7 +26,7 @@
         <span class="ticker-item"><i class="fas fa-ring" style="color:#c0c0c0;"></i> Silver: <strong id="ticker-silver">₹92/g</strong></span>
       </div>
       <div class="ticker-actions">
-        <a href="calculator.html" class="ticker-link"><i class="fas fa-calculator"></i> Price Calculator</a>
+        <a href="appointments.html" class="ticker-link"><i class="fas fa-calendar-check"></i> Book Visit</a>
       </div>
     </div>
   </div>
@@ -44,7 +44,6 @@
       <ul class="nav-menu">
         <li><a href="index.html" class="nav-link active">Home</a></li>
         <li><a href="collections.html" class="nav-link">Collections</a></li>
-        <li><a href="calculator.html" class="nav-link">Calculator</a></li>
         <li><a href="custom-order.html" class="nav-link">Custom Order</a></li>
         <li><a href="about.html" class="nav-link">About Us</a></li>
         <li><a href="contact.html" class="nav-link">Contact</a></li>
@@ -143,56 +142,6 @@
     </div>
   </section>
 
-  <!-- LIVE PRICE ESTIMATOR WIDGET -->
-  <section class="section">
-    <div class="container" style="max-width:900px;">
-      <div style="background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); padding:40px; box-shadow:var(--gold-glow);">
-        <div style="text-align:center; margin-bottom:30px;">
-          <span class="section-subtitle">TRANSPARENT PRICING</span>
-          <h2 style="font-size:2rem; font-family:var(--font-heading);">Instant Gold Price Calculator</h2>
-        </div>
-
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
-          <div class="form-group">
-            <label class="form-label">Metal</label>
-            <select id="calc-metal" class="form-control">
-              <option value="gold">Gold</option>
-              <option value="silver">Silver</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Purity</label>
-            <select id="calc-purity" class="form-control">
-              <option value="22K">22K Gold (BIS 916)</option>
-              <option value="24K">24K Pure Gold</option>
-              <option value="18K">18K Gold</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Weight (Grams)</label>
-            <input type="number" id="calc-weight" class="form-control" value="10" min="0.1" step="0.1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Est. Making Charge (₹)</label>
-            <input type="number" id="calc-making" class="form-control" value="2000">
-          </div>
-        </div>
-
-        <div style="text-align:center; margin-top:25px; padding-top:20px; border-top:1px solid var(--border-dark);">
-          <div style="font-size:0.9rem; color:var(--text-muted);">Estimated Price Output:</div>
-          <div id="calc-total-result" style="font-size:2.8rem; font-weight:800; color:var(--gold-light); margin:5px 0;">₹74,000</div>
-          <div id="calc-breakdown" style="font-size:0.85rem; color:var(--text-dim);"></div>
-          <a href="custom-order.html" class="btn btn-primary" style="margin-top:20px;"><i class="fas fa-paper-plane"></i> Enquire for Custom Piece</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FLOATING WHATSAPP BUTTON -->
-  <a href="https://wa.me/918708853335?text=Hello%20RN%20Jewellers,%20I%20have%20an%20enquiry!" target="_blank" class="floating-whatsapp" aria-label="Contact on WhatsApp">
-    <i class="fab fa-whatsapp"></i>
-  </a>
-
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
@@ -208,7 +157,6 @@
           <h4>Quick Links</h4>
           <ul class="footer-links">
             <li><a href="collections.html">All Collections</a></li>
-            <li><a href="calculator.html">Price Calculator</a></li>
             <li><a href="appointments.html">Book Appointment</a></li>
             <li><a href="custom-order.html">Custom Design Request</a></li>
           </ul>
@@ -250,7 +198,6 @@
   <script src="js/config.js?v=1.1.2"></script>
   <script src="js/api.js?v=1.1.2"></script>
   <script src="js/main.js?v=1.1.2"></script>
-  <script src="js/calculator.js?v=1.1.2"></script>
   <script src="js/pwa.js?v=1.1.2"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
