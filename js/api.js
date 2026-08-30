@@ -72,10 +72,7 @@ const API = {
 
     try {
       const nonce = `${Date.now()}_${Math.floor(Math.random()*100000)}`;
-      const prodPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getProducts&_nc=${nonce}`, {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-      })
+      const prodPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getProducts&_nc=${nonce}`)
         .then(res => res.json())
         .then(prodJson => {
           if (prodJson.status === 'success' && Array.isArray(prodJson.data)) {
@@ -103,10 +100,7 @@ const API = {
           }
         }).catch(e => console.log('Products sync error:', e));
 
-      const setPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings&_nc=${nonce}`, {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-      })
+      const setPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings&_nc=${nonce}`)
         .then(res => res.json())
         .then(setJson => {
           if (setJson.status === 'success' && setJson.data) {
@@ -150,10 +144,7 @@ const API = {
 
     try {
       const nonce = `${Date.now()}_${Math.floor(Math.random()*100000)}`;
-      const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings&_nc=${nonce}`, {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-      });
+      const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings&_nc=${nonce}`);
       const setJson = await res.json();
 
       if (setJson.status === 'success' && setJson.data) {
