@@ -137,7 +137,7 @@ const API = {
     }
   },
 
-  // Smart Timestamp-based Sync (Checks if server timestamp is newer before pulling full catalog)
+  // Smart Timestamp & Value-based Sync (Checks if rates or settings changed before updating UI)
   async checkAndSyncServer() {
     if (!CONFIG.APPS_SCRIPT_URL) return false;
 
@@ -146,23 +146,46 @@ const API = {
       const setJson = await res.json();
 
       if (setJson.status === 'success' && setJson.data) {
-        const serverLastUpdated = setJson.data.last_rate_update || setJson.data.last_updated || '';
+        const parseBool = (val, defaultVal) => {
+          if (val === undefined || val === null || val === '') return defaultVal;
+          return val !== '0' && val !== 0 && val !== false && val !== 'false';
+        };
+
         const currentRates = this.getRates();
-        const clientLastUpdated = currentRates.last_updated || '';
+        const currentSettings = this.getSiteSettings();
+        const defaultText = "✨ Festive Silver Offer: Special 15% OFF on Making Charges for All Silver Ornaments!";
 
         const newRates = {
           gold_22k: parseFloat(setJson.data.gold_22k_rate) || currentRates.gold_22k,
           gold_24k: parseFloat(setJson.data.gold_24k_rate) || currentRates.gold_24k,
           silver: parseFloat(setJson.data.silver_rate) || currentRates.silver,
-          last_updated: serverLastUpdated || new Date().toISOString()
+          show_gold_22k: parseBool(setJson.data.show_gold_22k, currentRates.show_gold_22k !== false),
+          show_gold_24k: parseBool(setJson.data.show_gold_24k, currentRates.show_gold_24k !== false),
+          show_silver: parseBool(setJson.data.show_silver, currentRates.show_silver !== false),
+          last_updated: setJson.data.last_rate_update || currentRates.last_updated || new Date().toISOString()
         };
 
+        const newSiteSettings = {
+          promo_banner_text: (setJson.data.promo_banner_text && String(setJson.data.promo_banner_text).trim() !== '') ? setJson.data.promo_banner_text : defaultText,
+          show_promo_banner: parseBool(setJson.data.show_promo_banner, currentSettings.show_promo_banner !== false),
+          hero_bg_url: (setJson.data.hero_bg_url && String(setJson.data.hero_bg_url).trim() !== '') ? setJson.data.hero_bg_url : "assets/images/hero.jpg",
+          enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
+          last_updated: setJson.data.last_settings_update || currentSettings.last_updated || new Date().toISOString()
+        };
+
+        const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
+        const settingsChanged = JSON.stringify(currentSettings) !== JSON.stringify(newSiteSettings);
         const hasProductCache = localStorage.getItem('rnj_products') !== null;
 
-        if (!hasProductCache || !clientLastUpdated || serverLastUpdated !== clientLastUpdated) {
-          localStorage.setItem('rnj_rates', JSON.stringify(newRates));
+        localStorage.setItem('rnj_rates', JSON.stringify(newRates));
+        localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
+
+        if (!hasProductCache) {
           await this.syncWithServer();
-          return true; // Data updated
+        }
+
+        if (ratesChanged || settingsChanged || !hasProductCache) {
+          return true; // Trigger instant live UI update
         }
       }
     } catch (err) {

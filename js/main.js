@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initPromoBanner();
     refreshPageContentsSilently();
 
-    // Smart 10-second background polling for timestamp changes
+    // Fast 5-second live background polling for real-time rates, banners & hero updates
     setInterval(async () => {
       const updated = await API.checkAndSyncServer();
       if (updated) {
@@ -29,7 +29,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         initPromoBanner();
         refreshPageContentsSilently();
       }
-    }, 10000);
+    }, 5000);
+
+    // Instant update check when switching back to the app/tab on iPhone or Android
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible') {
+        const updated = await API.checkAndSyncServer();
+        if (updated) {
+          initLiveRateTicker();
+          initHeroSection();
+          initParticleCanvas();
+          initPromoBanner();
+          refreshPageContentsSilently();
+        }
+      }
+    });
   }
 });
 
