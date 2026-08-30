@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   logVisitorAnalytics();
 
   if (CONFIG.APPS_SCRIPT_URL) {
+    // On every page load — always fetch fresh from server and apply
     await API.checkAndSyncServer();
     initLiveRateTicker();
     initHeroSection();
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initPromoBanner();
     refreshPageContentsSilently();
 
-    // Fast 5-second live background polling for real-time rates, banners & hero updates
+    // Poll every 19 seconds for live updates (rates, banner, hero background, particles)
     setInterval(async () => {
       const updated = await API.checkAndSyncServer();
       if (updated) {
@@ -32,19 +33,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         initPromoBanner();
         refreshPageContentsSilently();
       }
-    }, 5000);
+    }, 19000);
 
-    // Instant update check when switching back to the app/tab on iPhone or Android
+    // Every time app is opened/switched back — always force fresh fetch & re-render
     document.addEventListener('visibilitychange', async () => {
       if (document.visibilityState === 'visible') {
-        const updated = await API.checkAndSyncServer();
-        if (updated) {
-          initLiveRateTicker();
-          initHeroSection();
-          initParticleCanvas();
-          initPromoBanner();
-          refreshPageContentsSilently();
-        }
+        // Clear stale settings and FORCE a full re-render regardless of "changed" check
+        localStorage.removeItem('rnj_site_settings');
+        await API.checkAndSyncServer();
+        initLiveRateTicker();
+        initHeroSection();
+        initParticleCanvas();
+        initPromoBanner();
+        refreshPageContentsSilently();
       }
     });
   }
