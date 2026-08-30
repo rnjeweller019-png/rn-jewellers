@@ -191,11 +191,9 @@ const API = {
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
 
-        if (!hasProductCache) {
+        // Always sync full catalog if product cache missing OR server settings/rates changed
+        if (!hasProductCache || settingsChanged || ratesChanged) {
           await this.syncWithServer();
-        }
-
-        if (ratesChanged || settingsChanged || !hasProductCache) {
           return true; // Trigger instant live UI update
         }
       }
