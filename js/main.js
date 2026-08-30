@@ -3,6 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Always clear cached site settings so server is always source of truth on every load
+  localStorage.removeItem('rnj_site_settings');
+
   initLiveRateTicker();
   initNavbar();
   initWishlistBadge();
