@@ -62,13 +62,36 @@ function refreshPageContentsSilently() {
 // Live Rate Ticker Renderer
 function initLiveRateTicker() {
   const rates = API.getRates();
+
+  // Read ticker visibility settings saved from admin (via Google Sheets or localStorage)
+  let vis = { show_22k: true, show_24k: true, show_silver: true };
+  try {
+    const savedSettings = JSON.parse(localStorage.getItem('rnj_ticker_settings') || '{}');
+    if (savedSettings.ticker_show_22k !== undefined) vis.show_22k = savedSettings.ticker_show_22k !== 'false';
+    if (savedSettings.ticker_show_24k !== undefined) vis.show_24k = savedSettings.ticker_show_24k !== 'false';
+    if (savedSettings.ticker_show_silver !== undefined) vis.show_silver = savedSettings.ticker_show_silver !== 'false';
+  } catch(e) {}
+
   const gold22El = document.getElementById('ticker-gold-22k');
   const gold24El = document.getElementById('ticker-gold-24k');
   const silverEl = document.getElementById('ticker-silver');
 
-  if (gold22El) gold22El.textContent = `₹${rates.gold_22k.toLocaleString('en-IN')}/g`;
-  if (gold24El) gold24El.textContent = `₹${rates.gold_24k.toLocaleString('en-IN')}/g`;
-  if (silverEl) silverEl.textContent = `₹${rates.silver.toLocaleString('en-IN')}/g`;
+  // Update values and show/hide based on admin settings
+  if (gold22El) {
+    gold22El.textContent = `₹${rates.gold_22k.toLocaleString('en-IN')}/g`;
+    const tickerItem22 = gold22El.closest('.ticker-item');
+    if (tickerItem22) tickerItem22.style.display = vis.show_22k ? '' : 'none';
+  }
+  if (gold24El) {
+    gold24El.textContent = `₹${rates.gold_24k.toLocaleString('en-IN')}/g`;
+    const tickerItem24 = gold24El.closest('.ticker-item');
+    if (tickerItem24) tickerItem24.style.display = vis.show_24k ? '' : 'none';
+  }
+  if (silverEl) {
+    silverEl.textContent = `₹${rates.silver.toLocaleString('en-IN')}/g`;
+    const tickerItemSilver = silverEl.closest('.ticker-item');
+    if (tickerItemSilver) tickerItemSilver.style.display = vis.show_silver ? '' : 'none';
+  }
 }
 
 // Navbar & Sticky Behavior

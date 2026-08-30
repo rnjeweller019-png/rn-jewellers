@@ -94,6 +94,10 @@ const API = {
             };
             localStorage.setItem('rnj_rates', JSON.stringify(rates));
           }
+          // Save ticker visibility flags for use in initLiveRateTicker
+          if (setJson.status === 'success' && setJson.data) {
+            localStorage.setItem('rnj_ticker_settings', JSON.stringify(setJson.data));
+          }
         }).catch(e => console.log('Settings sync error:', e));
 
       await Promise.all([prodPromise, setPromise]);
