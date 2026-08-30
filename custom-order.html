@@ -62,21 +62,42 @@
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
             <div class="form-group">
-              <label class="form-label">Jewellery Type</label>
-              <select id="custom-type" class="form-control">
-                <option value="Ring">Ring</option>
+              <label class="form-label">Jewellery Type *</label>
+              <select id="custom-type" class="form-control" required>
+                <option value="Rings">Rings</option>
+                <option value="Men Ring">Men Ring</option>
+                <option value="Girls Ring">Girls Ring</option>
                 <option value="Necklace">Necklace / Choker</option>
-                <option value="Bangles">Bangles / Kada</option>
                 <option value="Earrings">Earrings</option>
-                <option value="Bridal Set">Full Bridal Set</option>
+                <option value="Bangles & Kadas">Bangles & Kadas</option>
+                <option value="Men Kada">Men Kada</option>
+                <option value="Kids Kada">Kids Kada</option>
+                <option value="Payal">Payal (Anklet)</option>
+                <option value="Boys Bracelet">Boys Bracelet</option>
+                <option value="Girls Bracelet">Girls Bracelet</option>
+                <option value="Chains & Pendants">Chains & Pendants</option>
+                <option value="Men Chain">Men Chain</option>
+                <option value="Girls Chain">Girls Chain</option>
+                <option value="Kids Chain">Kids Chain</option>
+                <option value="Bridal Sets">Bridal Sets</option>
+                <option value="925 Silver Coins">925 Silver Coins</option>
+                <option value="Silver Items">Silver Utensils / Items</option>
+                <option value="Other Custom Design">Other Custom Design</option>
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Preferred Metal</label>
-              <select id="custom-metal" class="form-control">
-                <option value="22K Gold">22K Hallmark Gold</option>
-                <option value="18K Diamond">18K Diamond Gold</option>
-                <option value="Silver">Pure 925 Silver</option>
+              <label class="form-label">Preferred Metal & Purity *</label>
+              <select id="custom-metal" class="form-control" required>
+                <option value="925 Sterling Silver">925 Sterling Silver (92.5%)</option>
+                <option value="Italian Silver">Italian Silver</option>
+                <option value="999 Fine Silver">999 Fine Silver (99.9%)</option>
+                <option value="Normal Silver">Normal / Traditional Silver</option>
+                <option value="900 Coin Silver">900 Coin Silver</option>
+                <option value="22K Gold">22K Gold (BIS 916)</option>
+                <option value="24K Gold">24K Pure Gold</option>
+                <option value="18K Gold">18K Gold / Diamond</option>
+                <option value="14K Gold">14K Gold</option>
+                <option value="Custom Purity Choice">Custom Choice (mention in details)</option>
               </select>
             </div>
           </div>
