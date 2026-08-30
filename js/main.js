@@ -59,38 +59,37 @@ function refreshPageContentsSilently() {
   }
 }
 
-// Live Rate Ticker Renderer
+// Live Rate Ticker Renderer (supports admin visibility toggles)
 function initLiveRateTicker() {
   const rates = API.getRates();
-
-  // Read ticker visibility settings saved from admin (via Google Sheets or localStorage)
-  let vis = { show_22k: true, show_24k: true, show_silver: true };
-  try {
-    const savedSettings = JSON.parse(localStorage.getItem('rnj_ticker_settings') || '{}');
-    if (savedSettings.ticker_show_22k !== undefined) vis.show_22k = savedSettings.ticker_show_22k !== 'false';
-    if (savedSettings.ticker_show_24k !== undefined) vis.show_24k = savedSettings.ticker_show_24k !== 'false';
-    if (savedSettings.ticker_show_silver !== undefined) vis.show_silver = savedSettings.ticker_show_silver !== 'false';
-  } catch(e) {}
-
   const gold22El = document.getElementById('ticker-gold-22k');
   const gold24El = document.getElementById('ticker-gold-24k');
   const silverEl = document.getElementById('ticker-silver');
 
-  // Update values and show/hide based on admin settings
+  const show22 = rates.show_gold_22k !== false && rates.show_gold_22k !== '0' && rates.show_gold_22k !== 0;
+  const show24 = rates.show_gold_24k !== false && rates.show_gold_24k !== '0' && rates.show_gold_24k !== 0;
+  const showSil = rates.show_silver !== false && rates.show_silver !== '0' && rates.show_silver !== 0;
+
   if (gold22El) {
     gold22El.textContent = `₹${rates.gold_22k.toLocaleString('en-IN')}/g`;
-    const tickerItem22 = gold22El.closest('.ticker-item');
-    if (tickerItem22) tickerItem22.style.display = vis.show_22k ? '' : 'none';
+    const parent = gold22El.closest('.ticker-item');
+    if (parent) parent.style.display = show22 ? 'inline-flex' : 'none';
   }
   if (gold24El) {
     gold24El.textContent = `₹${rates.gold_24k.toLocaleString('en-IN')}/g`;
-    const tickerItem24 = gold24El.closest('.ticker-item');
-    if (tickerItem24) tickerItem24.style.display = vis.show_24k ? '' : 'none';
+    const parent = gold24El.closest('.ticker-item');
+    if (parent) parent.style.display = show24 ? 'inline-flex' : 'none';
   }
   if (silverEl) {
     silverEl.textContent = `₹${rates.silver.toLocaleString('en-IN')}/g`;
-    const tickerItemSilver = silverEl.closest('.ticker-item');
-    if (tickerItemSilver) tickerItemSilver.style.display = vis.show_silver ? '' : 'none';
+    const parent = silverEl.closest('.ticker-item');
+    if (parent) parent.style.display = showSil ? 'inline-flex' : 'none';
+  }
+
+  // Hide the entire rate bar if all 3 are turned off by admin
+  const rateBar = document.querySelector('.rate-ticker-bar');
+  if (rateBar) {
+    rateBar.style.display = (!show22 && !show24 && !showSil) ? 'none' : 'block';
   }
 }
 
