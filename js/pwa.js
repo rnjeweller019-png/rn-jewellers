@@ -8,6 +8,19 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
       .then(reg => {
         console.log('PWA ServiceWorker registered', reg.scope);
+        // Force check for Service Worker updates on launch (crucial for iPhone PWA)
+        reg.update();
+
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New PWA version installed');
+              }
+            });
+          }
+        });
       })
       .catch(err => console.log('ServiceWorker registration failed', err));
   });
