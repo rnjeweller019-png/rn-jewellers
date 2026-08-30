@@ -186,7 +186,8 @@ const API = {
 
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
         const settingsChanged = JSON.stringify(currentSettings) !== JSON.stringify(newSiteSettings);
-        const hasProductCache = localStorage.getItem('rnj_products') !== null;
+        const rawProd = localStorage.getItem('rnj_products');
+        const hasProductCache = rawProd !== null && !rawProd.includes('PRD_001');
 
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
@@ -218,7 +219,8 @@ const API = {
       }
     } else {
       products = CONFIG.SAMPLE_PRODUCTS;
-      localStorage.setItem('rnj_products', JSON.stringify(products));
+      // NOTE: Do not write fallback sample products to localStorage here,
+      // so checkAndSyncServer knows real products have not been synced yet!
     }
     
     const rates = this.getRates();
