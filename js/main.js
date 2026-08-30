@@ -3,9 +3,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Always clear cached site settings so server is always source of truth on every load
-  localStorage.removeItem('rnj_site_settings');
-
   initLiveRateTicker();
   initNavbar();
   initWishlistBadge();
@@ -15,7 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   logVisitorAnalytics();
 
   if (CONFIG.APPS_SCRIPT_URL) {
-    // On every page load — always fetch fresh from server and apply
     await API.checkAndSyncServer();
     initLiveRateTicker();
     initHeroSection();
@@ -23,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initPromoBanner();
     refreshPageContentsSilently();
 
-    // Poll every 19 seconds for live updates (rates, banner, hero background, particles)
+    // Fast 5-second live background polling for real-time rates, banners & hero updates
     setInterval(async () => {
       const updated = await API.checkAndSyncServer();
       if (updated) {
@@ -33,19 +29,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         initPromoBanner();
         refreshPageContentsSilently();
       }
-    }, 10000);
+    }, 5000);
 
-    // Every time app is opened/switched back — always force fresh fetch & re-render
+    // Instant update check when switching back to the app/tab on iPhone or Android
     document.addEventListener('visibilitychange', async () => {
       if (document.visibilityState === 'visible') {
-        // Clear stale settings and FORCE a full re-render regardless of "changed" check
-        localStorage.removeItem('rnj_site_settings');
-        await API.checkAndSyncServer();
-        initLiveRateTicker();
-        initHeroSection();
-        initParticleCanvas();
-        initPromoBanner();
-        refreshPageContentsSilently();
+        const updated = await API.checkAndSyncServer();
+        if (updated) {
+          initLiveRateTicker();
+          initHeroSection();
+          initParticleCanvas();
+          initPromoBanner();
+          refreshPageContentsSilently();
+        }
       }
     });
   }
