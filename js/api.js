@@ -71,32 +71,6 @@ const API = {
     if (!CONFIG.APPS_SCRIPT_URL) return;
 
     try {
-      const prodPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getProducts&_t=${Date.now()}`, { cache: 'no-store' })
-        .then(res => res.json())
-        .then(prodJson => {
-          if (prodJson.status === 'success' && Array.isArray(prodJson.data)) {
-            const cleanProducts = prodJson.data.map(p => {
-              let imgs = [];
-              if (typeof p.image_urls === 'string' && p.image_urls.trim() !== '') {
-                imgs = p.image_urls.split(',');
-              } else if (Array.isArray(p.image_urls)) {
-                imgs = p.image_urls.filter(Boolean);
-              }
-              imgs = imgs.map(img => typeof img === 'string' ? img.replace(/^(\.\.\/)+/, '').replace(/^\//, '') : img);
-              if (imgs.length === 0 || !imgs[0]) imgs = ['assets/images/ring_1.jpg'];
-              return {
-                ...p,
-                weight_g: parseFloat(p.weight_g) || 0,
-                making_charge: parseFloat(p.making_charge) || 0,
-                product_discount: parseFloat(p.product_discount) || 0,
-                image_urls: imgs,
-                is_featured: p.is_featured === true || String(p.is_featured).toLowerCase() === 'true' || p.is_featured === 1 || p.is_featured === '1',
-                is_new_arrival: p.is_new_arrival === true || String(p.is_new_arrival).toLowerCase() === 'true' || p.is_new_arrival === 1 || p.is_new_arrival === '1',
-                is_no_making_charge: p.is_no_making_charge === true || String(p.is_no_making_charge).toLowerCase() === 'true'
-              };
-            });
-            localStorage.setItem('rnj_products', JSON.stringify(cleanProducts));
-          }
       const nonce = `${Date.now()}_${Math.floor(Math.random()*100000)}`;
       const prodPromise = fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getProducts&_nc=${nonce}`, {
         cache: 'no-store',
