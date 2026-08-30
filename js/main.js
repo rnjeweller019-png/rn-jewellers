@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initLiveRateTicker();
   initNavbar();
   initWishlistBadge();
+  initHeroSection();
   initParticleCanvas();
   initPromoBanner();
   logVisitorAnalytics();
@@ -13,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (CONFIG.APPS_SCRIPT_URL) {
     await API.checkAndSyncServer();
     initLiveRateTicker();
+    initHeroSection();
+    initParticleCanvas();
+    initPromoBanner();
     refreshPageContentsSilently();
 
     // Smart 10-second background polling for timestamp changes
@@ -20,6 +24,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const updated = await API.checkAndSyncServer();
       if (updated) {
         initLiveRateTicker();
+        initHeroSection();
+        initParticleCanvas();
+        initPromoBanner();
         refreshPageContentsSilently();
       }
     }, 10000);
@@ -134,18 +141,55 @@ function initWishlistBadge() {
 // Promo Banner Close Handler
 function initPromoBanner() {
   const promo = document.getElementById('promo-banner');
-  const closeBtn = document.getElementById('promo-close-btn');
-  if (promo && closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      promo.style.display = 'none';
-    });
+  if (!promo) return;
+
+  const settings = API.getSiteSettings();
+  const show = settings.show_promo_banner !== false && settings.show_promo_banner !== '0';
+
+  if (!show) {
+    promo.style.display = 'none';
+    return;
   }
+
+  const promoTextSpan = promo.querySelector('span');
+  if (promoTextSpan && settings.promo_banner_text) {
+    promoTextSpan.innerHTML = settings.promo_banner_text;
+  }
+
+  promo.style.display = 'flex';
+
+  const closeBtn = document.getElementById('promo-close-btn');
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      promo.style.display = 'none';
+    };
+  }
+}
+
+// Custom Hero Background Image Renderer
+function initHeroSection() {
+  const hero = document.querySelector('.hero-section');
+  if (!hero) return;
+
+  const settings = API.getSiteSettings();
+  const bgUrl = settings.hero_bg_url || 'assets/images/hero.jpg';
+  hero.style.background = `linear-gradient(to right, rgba(8,8,8,0.95), rgba(8,8,8,0.6)), url('${bgUrl}') center/cover no-repeat`;
 }
 
 // Gold Sparkle Particle Canvas Background Effect
 function initParticleCanvas() {
   const canvas = document.getElementById('particles-canvas');
   if (!canvas) return;
+
+  const settings = API.getSiteSettings();
+  const enable = settings.enable_particles !== false && settings.enable_particles !== '0';
+
+  if (!enable) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  canvas.style.display = 'block';
 
   const ctx = canvas.getContext('2d');
   let width = (canvas.width = canvas.parentElement.offsetWidth);
@@ -172,6 +216,7 @@ function initParticleCanvas() {
   }
 
   function render() {
+    if (canvas.style.display === 'none') return;
     ctx.clearRect(0, 0, width, height);
 
     particles.forEach(p => {
