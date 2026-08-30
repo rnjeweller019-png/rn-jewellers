@@ -1,6 +1,10 @@
-/**
- * RN JEWELLERS — CATALOG / COLLECTIONS CONTROLLER
- */
+let globalFilterAndRender = null;
+
+window.refreshCollectionsGrid = function() {
+  if (typeof globalFilterAndRender === 'function') {
+    globalFilterAndRender();
+  }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   initCollectionsPage();
@@ -34,7 +38,7 @@ function initCollectionsPage() {
     // Search Query
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
     if (query) {
-      products = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+      products = products.filter(p => p.name.toLowerCase().includes(query) || (p.description && p.description.toLowerCase().includes(query)));
     }
 
     // Sorting
@@ -63,7 +67,7 @@ function initCollectionsPage() {
     grid.innerHTML = products.map(renderProductCard).join('');
   }
 
-  window.refreshCollectionsGrid = filterAndRender;
+  globalFilterAndRender = filterAndRender;
 
   // URL Query Parameters support (?category=rings)
   const urlParams = new URLSearchParams(window.location.search);
