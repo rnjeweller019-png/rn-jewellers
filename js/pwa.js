@@ -5,7 +5,7 @@
 // ─── SERVICE WORKER REGISTRATION ───────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=2.2.0')
+    navigator.serviceWorker.register('./sw.js?v=2.3.0')
       .then(reg => {
         console.log('PWA ServiceWorker registered', reg.scope);
         // Force check for Service Worker updates on launch (crucial for iPhone PWA)

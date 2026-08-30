@@ -23,7 +23,7 @@ function initProductDetailPage() {
   const isWishlisted = API.getWishlist().includes(product.id);
 
   container.innerHTML = `
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:50px; align-items:start;">
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:clamp(20px, 5vw, 50px); align-items:start;">
       <!-- Left: Image Gallery -->
       <div>
         <div style="background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); overflow:hidden; position:relative; aspect-ratio:1;">
@@ -37,7 +37,7 @@ function initProductDetailPage() {
       <!-- Right: Product Info & Pricing Breakdown -->
       <div>
         <div class="product-category" style="font-size:0.9rem; margin-bottom:10px;">${escapeHtml(product.category.toUpperCase())} • ${escapeHtml(calc.purity_text.toUpperCase())}</div>
-        <h1 style="font-size:2.2rem; margin-bottom:8px; font-family:var(--font-heading);">${product.name}</h1>
+        <h1 style="font-size:clamp(1.4rem, 5vw, 2.2rem); margin-bottom:8px; font-family:var(--font-heading);">${product.name}</h1>
         ${product.certification ? `<div style="font-size:0.82rem; color:var(--gold-light); margin-bottom:12px;"><i class="fas fa-certificate"></i> ${escapeHtml(product.certification)}</div>` : ''}
         
         <div style="background:var(--surface-2); border:1px solid var(--border-gold); padding:20px; border-radius:var(--radius-md); margin-bottom:25px;">
@@ -46,7 +46,7 @@ function initProductDetailPage() {
             <span class="badge badge-featured"><i class="fas fa-sync-alt"></i> Live Rate Updated</span>
           </div>
           <div style="display:flex; align-items:baseline; gap:15px; margin-bottom:15px;">
-            <span style="font-size:2.4rem; font-weight:800; color:var(--gold-light);">₹${calc.final_price.toLocaleString('en-IN')}</span>
+            <span style="font-size:clamp(1.6rem, 6vw, 2.4rem); font-weight:800; color:var(--gold-light);">₹${calc.final_price.toLocaleString('en-IN')}</span>
             ${calc.discount_amount > 0 ? `<span style="font-size:1.2rem; color:var(--text-dim); text-decoration:line-through;">₹${calc.gross_price.toLocaleString('en-IN')}</span>` : ''}
             ${calc.discount_percent > 0 ? `<span class="badge badge-discount" style="font-size:0.9rem;">${calc.discount_percent}% OFF</span>` : ''}
           </div>
