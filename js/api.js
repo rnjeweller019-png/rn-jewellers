@@ -367,10 +367,20 @@ const API = {
     localStorage.setItem('rnj_' + endpointAction, JSON.stringify(history));
 
     if (CONFIG.APPS_SCRIPT_URL) {
-      const payload = encodeURIComponent(JSON.stringify(data));
-      return fetch(`${CONFIG.APPS_SCRIPT_URL}?action=${endpointAction}&data=${payload}`)
-        .then(res => res.json())
-        .catch(err => ({ status: 'success', local: true }));
+      // Primary: Send via HTTP POST body so image base64 payloads can be transmitted safely
+      return fetch(CONFIG.APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: endpointAction, data: data })
+      })
+      .then(res => res.json())
+      .catch(() => {
+        // Fallback: If POST fails or blocked, strip heavy base64 and fire GET URL request
+        const cleanData = { ...data };
+        delete cleanData.reference_image_base64;
+        const payload = encodeURIComponent(JSON.stringify(cleanData));
+        return fetch(`${CONFIG.APPS_SCRIPT_URL}?action=${endpointAction}&data=${payload}`).then(res => res.json()).catch(() => ({ status: 'success', local: true }));
+      });
     }
 
     return Promise.resolve({ status: 'success', local: true });

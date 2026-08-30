@@ -12,13 +12,40 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = () => {
-          base64Image = reader.result;
-          const preview = document.getElementById('image-preview');
-          if (preview) {
-            preview.src = base64Image;
-            preview.style.display = 'block';
-          }
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800;
+            const MAX_HEIGHT = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            base64Image = canvas.toDataURL('image/jpeg', 0.7);
+
+            const preview = document.getElementById('image-preview');
+            if (preview) {
+              preview.src = base64Image;
+              preview.style.display = 'block';
+            }
+          };
+          img.src = evt.target.result;
         };
         reader.readAsDataURL(file);
       }
