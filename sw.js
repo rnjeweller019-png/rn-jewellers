@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v48';
+const CACHE_NAME = 'rnj-jewellers-v100';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -12,8 +12,7 @@ const ASSETS_TO_CACHE = [
   './css/style.css',
   './css/animations.css',
   './assets/logo.png'
-  // NOTE: JS files (config.js, pwa.js, api.js) are intentionally NOT cached
-  // so browsers always fetch the latest code from the server
+  // NOTE: JS files and API calls are strictly NEVER cached
 ];
 
 self.addEventListener('install', (e) => {
@@ -35,15 +34,17 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // NEVER cache: API calls, OneSignal, JS files, config files
+  // NEVER cache: Google Apps Script API calls, googleusercontent redirects, OneSignal, JS files
   const url = e.request.url;
   if (
-    url.includes('script.google.com') ||
+    url.includes('google') ||
+    url.includes('googleusercontent') ||
+    url.includes('script.google') ||
     url.includes('onesignal.com') ||
     url.endsWith('.js') ||
     url.includes('/js/')
   ) {
-    return; // Always fetch fresh from network
+    return; // Always fetch fresh from network directly
   }
 
   e.respondWith(
