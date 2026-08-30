@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         initPromoBanner();
         refreshPageContentsSilently();
       }
-    }, 19000);
+    }, 10000);
 
     // Every time app is opened/switched back — always force fresh fetch & re-render
     document.addEventListener('visibilitychange', async () => {
