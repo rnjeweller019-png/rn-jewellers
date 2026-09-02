@@ -329,7 +329,7 @@ const API = {
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
         const settingsChanged = JSON.stringify(currentSettings) !== JSON.stringify(newSiteSettings);
         const rawProd = localStorage.getItem('rnj_products');
-        const hasProductCache = rawProd !== null && !rawProd.includes('PRD_001');
+        const hasProductCache = rawProd !== null;
 
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
@@ -349,7 +349,7 @@ const API = {
     return false;
   },
 
-  // Get All Products (from LocalStorage or Sample Products)
+  // Get All Products (exclusively synced from Google Sheet)
   getProducts() {
     const stored = localStorage.getItem('rnj_products');
     let products = [];
@@ -360,12 +360,10 @@ const API = {
           products = parsed;
         }
       } catch(e) {
-        products = CONFIG.SAMPLE_PRODUCTS;
+        products = [];
       }
     } else {
-      products = CONFIG.SAMPLE_PRODUCTS;
-      // NOTE: Do not write fallback sample products to localStorage here,
-      // so checkAndSyncServer knows real products have not been synced yet!
+      products = [];
     }
     
     const rates = this.getRates();
@@ -499,7 +497,7 @@ const API = {
 
   // Save/Add Product (Admin)
   saveProduct(productData) {
-    let products = JSON.parse(localStorage.getItem('rnj_products')) || CONFIG.SAMPLE_PRODUCTS;
+    let products = JSON.parse(localStorage.getItem('rnj_products')) || [];
     
     if (productData.id) {
       const index = products.findIndex(p => p.id === productData.id);
@@ -523,7 +521,7 @@ const API = {
 
   // Delete Product (Admin)
   deleteProduct(id) {
-    let products = JSON.parse(localStorage.getItem('rnj_products')) || CONFIG.SAMPLE_PRODUCTS;
+    let products = JSON.parse(localStorage.getItem('rnj_products')) || [];
     products = products.filter(p => p.id !== id);
     localStorage.setItem('rnj_products', JSON.stringify(products));
 
