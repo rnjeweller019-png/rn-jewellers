@@ -63,7 +63,10 @@ const API = {
     const root = document.documentElement;
 
     // 1. Page Background
-    if (s.theme_bg) root.style.setProperty('--bg-dark', s.theme_bg);
+    if (s.theme_bg) {
+      root.style.setProperty('--bg-dark', s.theme_bg);
+      if (document.body) document.body.style.backgroundColor = s.theme_bg;
+    }
 
     // 2. Card / Surface background & Dark borders
     if (s.theme_surface_bg) {

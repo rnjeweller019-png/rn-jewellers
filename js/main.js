@@ -189,14 +189,32 @@ function initPromoBanner() {
   }
 }
 
-// Custom Hero Background Image Renderer
+// Custom Hero Background Image Renderer (100% iOS Safari & Mobile Compatible)
 function initHeroSection() {
   const hero = document.querySelector('.hero-section');
   if (!hero) return;
 
   const settings = API.getSiteSettings();
-  const bgUrl = settings.hero_bg_url || 'assets/images/hero.jpg';
-  hero.style.background = `linear-gradient(to right, rgba(8,8,8,0.95), rgba(8,8,8,0.6)), url('${bgUrl}') center/cover no-repeat`;
+  let bgUrl = settings.hero_bg_url;
+  if (!bgUrl || String(bgUrl).trim() === '' || bgUrl === 'undefined' || bgUrl === 'null') {
+    bgUrl = 'assets/images/hero.jpg';
+  }
+
+  // Preload image to ensure instant error fallback & zero black screen on iPhone Safari
+  const img = new Image();
+  const applyBg = (url) => {
+    hero.style.backgroundImage = `linear-gradient(to right, rgba(8,8,8,0.7), rgba(8,8,8,0.3)), url('${url}')`;
+    hero.style.backgroundPosition = 'center center';
+    hero.style.backgroundSize = 'cover';
+    hero.style.backgroundRepeat = 'no-repeat';
+  };
+
+  img.onload = () => applyBg(bgUrl);
+  img.onerror = () => applyBg('assets/images/hero.jpg');
+  img.src = bgUrl;
+
+  // Immediate initial styling before load resolves
+  applyBg(bgUrl);
 }
 
 // Gold Sparkle Particle Canvas Background Effect
