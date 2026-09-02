@@ -330,6 +330,9 @@ const API = {
 
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
+        
+        // Instant theme update as soon as server settings arrive (zero delay for new visitors)
+        this.applyTheme();
 
         // Always sync full catalog if product cache missing OR server settings/rates changed
         if (!hasProductCache || settingsChanged || ratesChanged) {
@@ -583,3 +586,13 @@ const API = {
     return Promise.resolve({ status: 'success', local: true });
   }
 };
+
+// Auto-apply theme immediately on script load & trigger early server sync
+(function() {
+  try {
+    API.applyTheme();
+    if (typeof CONFIG !== 'undefined' && CONFIG.APPS_SCRIPT_URL) {
+      API.checkAndSyncServer();
+    }
+  } catch(e) {}
+})();
