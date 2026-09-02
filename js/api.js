@@ -588,12 +588,57 @@ const API = {
   }
 };
 
-// Auto-apply theme immediately on script load & trigger early server sync
+// ─── AUTO-RUN ON SCRIPT LOAD ──────────────────────────────────────────────────
 (function() {
   try {
+    // 1. Apply cached theme instantly (zero delay for returning visitors)
     API.applyTheme();
+
+    // 2. Trigger early background server sync
     if (typeof CONFIG !== 'undefined' && CONFIG.APPS_SCRIPT_URL) {
       API.checkAndSyncServer();
+
+      // 3. ⚡ KEEPALIVE PING every 4 minutes to prevent Google Apps Script cold start
+      //    Cold start = Google wakes up script from sleep = 2-5 second delay
+      //    Pinging keeps the script "warm" so it responds in ~200ms instead
+      setInterval(() => {
+        fetch(`${CONFIG.APPS_SCRIPT_URL}?action=ping&_nc=${Date.now()}`)
+          .catch(() => {}); // Silent — just to keep the script warm
+      }, 4 * 60 * 1000); // Every 4 minutes
+    }
+
+    // 4. ⚡ INTERSECTIONOBSERVER LAZY LOADING
+    //    Only loads product images when they scroll into the visible viewport
+    //    Prevents mobile bandwidth from loading 50+ images at once on page load
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const dataSrc = img.getAttribute('data-src');
+            if (dataSrc) {
+              img.src = dataSrc;
+              img.removeAttribute('data-src');
+            }
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '200px 0px', // Start loading 200px before image enters viewport
+        threshold: 0.01
+      });
+
+      // Observe any lazily-queued images added to the DOM
+      window._rnjObserveImage = (img) => imageObserver.observe(img);
+
+      // Auto-observe any images with data-src attribute
+      const observeAll = () => {
+        document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
+      };
+
+      document.addEventListener('DOMContentLoaded', observeAll);
+      // Re-observe after dynamic content renders (product grids)
+      window._rnjObserveAll = observeAll;
     }
   } catch(e) {}
 })();
