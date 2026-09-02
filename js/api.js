@@ -48,7 +48,12 @@ const API = {
       theme_promo_bg: '',
       theme_promo_text: '#080808',
       theme_wa_bg: '#25d366',
-      theme_wa_text: '#ffffff'
+      theme_wa_text: '#ffffff',
+      // Hero specific text colors
+      theme_hero_sub: '',
+      theme_hero_title: '',
+      theme_hero_hl: '',
+      theme_hero_desc: ''
     };
   },
 
@@ -128,6 +133,12 @@ const API = {
     // 10. WhatsApp / Enquire Button Background & Text
     if (s.theme_wa_bg) root.style.setProperty('--btn-wa-bg', s.theme_wa_bg);
     if (s.theme_wa_text) root.style.setProperty('--btn-wa-text', s.theme_wa_text);
+
+    // 11. Hero Text Color Overrides
+    if (s.theme_hero_sub)   root.style.setProperty('--hero-sub-color', s.theme_hero_sub);
+    if (s.theme_hero_title) root.style.setProperty('--hero-title-color', s.theme_hero_title);
+    if (s.theme_hero_hl)    root.style.setProperty('--hero-hl-color', s.theme_hero_hl);
+    if (s.theme_hero_desc)  root.style.setProperty('--hero-desc-color', s.theme_hero_desc);
 
     // Direct override for floating whatsapp & product enquire buttons
     document.querySelectorAll('.floating-whatsapp, .btn-whatsapp').forEach(el => {
@@ -240,7 +251,11 @@ const API = {
               theme_promo_bg:     setJson.data.theme_promo_bg     || currentSettings.theme_promo_bg     || '',
               theme_promo_text:   setJson.data.theme_promo_text   || currentSettings.theme_promo_text   || '',
               theme_wa_bg:        setJson.data.theme_wa_bg        || currentSettings.theme_wa_bg        || '#25d366',
-              theme_wa_text:      setJson.data.theme_wa_text      || currentSettings.theme_wa_text      || '#ffffff'
+              theme_wa_text:      setJson.data.theme_wa_text      || currentSettings.theme_wa_text      || '#ffffff',
+              theme_hero_sub:     setJson.data.theme_hero_sub     || currentSettings.theme_hero_sub     || '',
+              theme_hero_title:   setJson.data.theme_hero_title   || currentSettings.theme_hero_title   || '',
+              theme_hero_hl:      setJson.data.theme_hero_hl      || currentSettings.theme_hero_hl      || '',
+              theme_hero_desc:    setJson.data.theme_hero_desc    || currentSettings.theme_hero_desc    || ''
             };
             localStorage.setItem('rnj_site_settings', JSON.stringify(siteSettings));
           }
@@ -301,7 +316,11 @@ const API = {
           theme_promo_bg:      setJson.data.theme_promo_bg      || currentSettings.theme_promo_bg      || '',
           theme_promo_text:    setJson.data.theme_promo_text    || currentSettings.theme_promo_text    || '',
           theme_wa_bg:         setJson.data.theme_wa_bg         || currentSettings.theme_wa_bg         || '#25d366',
-          theme_wa_text:       setJson.data.theme_wa_text       || currentSettings.theme_wa_text       || '#ffffff'
+          theme_wa_text:       setJson.data.theme_wa_text       || currentSettings.theme_wa_text       || '#ffffff',
+          theme_hero_sub:      setJson.data.theme_hero_sub      || currentSettings.theme_hero_sub      || '',
+          theme_hero_title:    setJson.data.theme_hero_title    || currentSettings.theme_hero_title    || '',
+          theme_hero_hl:       setJson.data.theme_hero_hl       || currentSettings.theme_hero_hl       || '',
+          theme_hero_desc:     setJson.data.theme_hero_desc     || currentSettings.theme_hero_desc     || ''
         };
 
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);

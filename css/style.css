@@ -32,6 +32,12 @@
   --ticker-text: #f5d77f;
   --promo-bg: linear-gradient(135deg, #f5d77f 0%, #c9a84c 50%, #967425 100%);
   --promo-text: #080808;
+
+  /* Hero Section Color Overrides */
+  --hero-sub-color: #c9a84c;
+  --hero-title-color: #f5f0e8;
+  --hero-hl-color: #c9a84c;
+  --hero-desc-color: #a0a0a0;
   
   /* Status Colors */
   --success: #4caf7d;
@@ -599,13 +605,29 @@ img {
   margin: 0 auto 50px auto;
 }
 
-.section-subtitle {
-  color: var(--gold-primary);
+.section-subtitle, .hero-subtitle {
+  color: var(--hero-sub-color, var(--gold-primary));
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 3px;
   font-weight: 600;
   margin-bottom: 10px;
+}
+
+.hero-title {
+  color: var(--hero-title-color, var(--text-main));
+}
+
+.hero-title .gold-gradient-text,
+.hero-title .hero-highlight {
+  color: var(--hero-hl-color, var(--gold-primary));
+  background: var(--hero-hl-gradient, var(--gold-gradient));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+  color: var(--hero-desc-color, var(--text-muted));
 }
 
 .section-title {
