@@ -148,6 +148,11 @@ const API = {
       if (s.theme_wa_bg) el.style.backgroundColor = s.theme_wa_bg;
       if (s.theme_wa_text) el.style.color = s.theme_wa_text;
     });
+
+    // Reveal page now that exact theme variables have been assigned
+    if (document.documentElement.classList.contains('rnj-theme-pending')) {
+      document.documentElement.classList.remove('rnj-theme-pending');
+    }
   },
 
   // Save/Update Rates

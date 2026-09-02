@@ -8,6 +8,32 @@
   <link rel="stylesheet" href="css/style.css">
   <!-- OneSignal Web Push SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <!-- ⚡ ZERO-FLASH THEME PRELOADER: Guarantees ONLY Google Sheet theme is ever shown -->
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('rnj_site_settings');
+        if (s) {
+          var p = JSON.parse(s);
+          var r = document.documentElement;
+          if (p.theme_bg) { r.style.setProperty('--bg-dark', p.theme_bg); document.documentElement.style.backgroundColor = p.theme_bg; }
+          if (p.theme_surface_bg) { r.style.setProperty('--surface-1', p.theme_surface_bg); r.style.setProperty('--surface-2', p.theme_surface_bg); }
+          if (p.theme_accent) { r.style.setProperty('--gold-primary', p.theme_accent); r.style.setProperty('--gold-light', p.theme_accent); }
+          if (p.theme_text) r.style.setProperty('--text-main', p.theme_text);
+          if (p.theme_muted_text) r.style.setProperty('--text-muted', p.theme_muted_text);
+          if (p.theme_navbar_bg) r.style.setProperty('--surface-glass', p.theme_navbar_bg);
+          if (p.theme_hero_sub) r.style.setProperty('--hero-sub-color', p.theme_hero_sub);
+          if (p.theme_hero_title) r.style.setProperty('--hero-title-color', p.theme_hero_title);
+          if (p.theme_hero_hl) r.style.setProperty('--hero-hl-color', p.theme_hero_hl);
+          if (p.theme_hero_desc) r.style.setProperty('--hero-desc-color', p.theme_hero_desc);
+        } else {
+          // Brand-new first-time visitor: Shield page until Google Sheet theme arrives
+          document.documentElement.classList.add('rnj-theme-pending');
+          setTimeout(function() { document.documentElement.classList.remove('rnj-theme-pending'); }, 1200);
+        }
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -132,10 +158,10 @@
   </a>
 
   <!-- SCRIPTS -->
-  <script src="js/config.js?v=3.3.0"></script>
-  <script src="js/api.js?v=3.3.0"></script>
-  <script src="js/main.js?v=3.3.0"></script>
-  <script src="js/products.js?v=3.3.0"></script>
-  <script src="js/pwa.js?v=3.3.0"></script>
+  <script src="js/config.js?v=3.4.0"></script>
+  <script src="js/api.js?v=3.4.0"></script>
+  <script src="js/main.js?v=3.4.0"></script>
+  <script src="js/products.js?v=3.4.0"></script>
+  <script src="js/pwa.js?v=3.4.0"></script>
 </body>
 </html>

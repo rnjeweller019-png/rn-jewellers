@@ -1,6 +1,19 @@
 /* RN JEWELLERS — LUXURY DESIGN SYSTEM */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
+/* ZERO FLASH OF DEFAULT THEME BARRIER */
+html.rnj-theme-pending {
+  background-color: var(--bg-dark, #080808);
+}
+html.rnj-theme-pending body {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body {
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+
 :root {
   /* Color Palette */
   --bg-dark: #080808;
