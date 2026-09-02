@@ -15,7 +15,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   logVisitorAnalytics();
 
   if (CONFIG.APPS_SCRIPT_URL) {
+    const loadingBar = document.getElementById('sync-loading-bar');
+    if (loadingBar) loadingBar.classList.add('visible');
+
     await API.checkAndSyncServer();
+
+    if (loadingBar) loadingBar.classList.remove('visible');
     API.applyTheme();
     initLiveRateTicker();
     initHeroSection();
@@ -292,7 +297,10 @@ function renderProductCard(product) {
   return `
     <div class="product-card" data-id="${product.id}">
       <div class="product-image-wrap">
-        <img src="${mainImg}" alt="${product.name}" class="product-img" loading="lazy" onerror="this.onerror=null; this.src='assets/logo.png';">
+        <div class="product-img-skeleton"></div>
+        <img src="${mainImg}" alt="${product.name}" class="product-img img-blur-up" loading="lazy"
+          onload="this.classList.add('img-loaded'); this.previousElementSibling.style.display='none';"
+          onerror="this.onerror=null; this.src='assets/logo.png'; this.classList.add('img-loaded'); this.previousElementSibling.style.display='none';">
         <div class="product-badges">
           ${product.is_featured ? '<span class="badge badge-featured">Featured</span>' : ''}
           ${product.is_new_arrival ? '<span class="badge badge-new">New</span>' : ''}

@@ -1,5 +1,20 @@
 let globalFilterAndRender = null;
 
+// Generate skeleton product cards
+function renderSkeletonCards(count = 6) {
+  return Array(count).fill(0).map(() => `
+    <div class="product-card-skeleton">
+      <div class="skel-img"></div>
+      <div class="skel-body">
+        <div class="skel-line short"></div>
+        <div class="skel-line tall"></div>
+        <div class="skel-line"></div>
+        <div class="skel-line short"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
 window.refreshCollectionsGrid = function() {
   if (typeof globalFilterAndRender === 'function') {
     globalFilterAndRender();
@@ -19,6 +34,14 @@ function initCollectionsPage() {
   const countEl = document.getElementById('product-count');
 
   if (!grid) return;
+
+  // Show skeletons immediately while waiting for Google Sheet data
+  const showSkeletons = () => {
+    if (grid && API.getProducts().length === 0) {
+      grid.innerHTML = renderSkeletonCards(6);
+    }
+  };
+  showSkeletons();
 
   function filterAndRender() {
     let products = API.getProducts();

@@ -1205,3 +1205,98 @@ textarea.form-control {
   }
 }
 
+/* ═══════════════════════════════════════════════
+   SKELETON LOADING & PROGRESSIVE IMAGE SYSTEM
+   Prevents blank flash & shows instant placeholders
+   ═══════════════════════════════════════════════ */
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--surface-1) 25%, var(--surface-2) 50%, var(--surface-1) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+/* Product image skeleton placeholder */
+.product-img-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--surface-1) 25%, var(--surface-2) 50%, var(--surface-1) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 0;
+  z-index: 1;
+}
+
+/* Progressive blur-up image loading */
+.img-blur-up {
+  filter: blur(8px);
+  transform: scale(1.02);
+  opacity: 0.6;
+  transition: filter 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+  will-change: filter, transform, opacity;
+  position: relative;
+  z-index: 2;
+}
+
+.img-blur-up.img-loaded {
+  filter: blur(0);
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Skeleton product card (while data loads from server) */
+.product-card-skeleton {
+  background: var(--surface-1);
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.product-card-skeleton .skel-img {
+  height: 220px;
+  background: linear-gradient(90deg, var(--surface-1) 25%, var(--surface-2) 50%, var(--surface-1) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.product-card-skeleton .skel-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-card-skeleton .skel-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface-1) 25%, var(--surface-2) 50%, var(--surface-1) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.product-card-skeleton .skel-line.short { width: 55%; }
+.product-card-skeleton .skel-line.tall  { height: 18px; width: 80%; }
+
+/* Stale-while-revalidate loading banner */
+.sync-loading-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-primary), var(--gold-light), var(--gold-primary));
+  background-size: 200% 100%;
+  animation: tickerScroll 1.5s linear infinite;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sync-loading-bar.visible { opacity: 1; }
+
