@@ -23,7 +23,7 @@ const API = {
     return CONFIG.DEFAULT_RATES;
   },
 
-  // Get Site Settings (promo text, show_promo, hero_bg_url, enable_particles)
+  // Get Site Settings (promo text, show_promo, hero_bg_url, enable_particles, theme)
   getSiteSettings() {
     const stored = localStorage.getItem('rnj_site_settings');
     if (stored) {
@@ -33,8 +33,45 @@ const API = {
       promo_banner_text: "✨ Festive Offer: Special 15% OFF on Making Charges for All Pure Silver Collections!",
       show_promo_banner: true,
       hero_bg_url: "assets/images/hero.jpg",
-      enable_particles: true
+      enable_particles: true,
+      // Theme defaults
+      theme_bg: '#080808',
+      theme_accent: '#c9a84c',
+      theme_text: '#f5f0e8',
+      theme_btn_bg: '#c9a84c',
+      theme_navbar_bg: 'rgba(18,18,18,0.75)',
+      theme_wa_bg: '#25d366',
+      theme_wa_text: '#ffffff'
     };
+  },
+
+  // Apply Theme Colors as CSS variables on :root
+  applyTheme() {
+    const s = this.getSiteSettings();
+    const root = document.documentElement;
+    if (s.theme_bg)       root.style.setProperty('--bg-dark', s.theme_bg);
+    if (s.theme_accent) {
+      root.style.setProperty('--gold-primary', s.theme_accent);
+      root.style.setProperty('--gold-dark', s.theme_accent);
+      const hex = s.theme_accent.replace('#','');
+      const r = parseInt(hex.substring(0,2),16);
+      const g = parseInt(hex.substring(2,4),16);
+      const b = parseInt(hex.substring(4,6),16);
+      root.style.setProperty('--border-gold', `rgba(${r},${g},${b},0.25)`);
+      root.style.setProperty('--gold-glow', `0 0 25px rgba(${r},${g},${b},0.25)`);
+      root.style.setProperty('--gold-gradient', `linear-gradient(135deg, #ffffff 0%, ${s.theme_accent} 50%, ${s.theme_accent} 100%)`);
+    }
+    if (s.theme_text) {
+      root.style.setProperty('--text-main', s.theme_text);
+    }
+    if (s.theme_navbar_bg)  root.style.setProperty('--surface-glass', s.theme_navbar_bg);
+    // WhatsApp button color
+    if (s.theme_wa_bg || s.theme_wa_text) {
+      document.querySelectorAll('.floating-whatsapp, .btn-whatsapp').forEach(el => {
+        if (s.theme_wa_bg)   el.style.background = s.theme_wa_bg;
+        if (s.theme_wa_text) el.style.color = s.theme_wa_text;
+      });
+    }
   },
 
   // Save/Update Rates
@@ -126,7 +163,15 @@ const API = {
               promo_banner_text: (setJson.data.promo_banner_text && String(setJson.data.promo_banner_text).trim() !== '') ? setJson.data.promo_banner_text : defaultText,
               show_promo_banner: parseBool(setJson.data.show_promo_banner, currentSettings.show_promo_banner !== false),
               hero_bg_url: (setJson.data.hero_bg_url && String(setJson.data.hero_bg_url).trim() !== '') ? setJson.data.hero_bg_url : "assets/images/hero.jpg",
-              enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false)
+              enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
+              // Theme colors
+              theme_bg:       setJson.data.theme_bg       || currentSettings.theme_bg       || '#080808',
+              theme_accent:   setJson.data.theme_accent   || currentSettings.theme_accent   || '#c9a84c',
+              theme_text:     setJson.data.theme_text     || currentSettings.theme_text     || '#f5f0e8',
+              theme_btn_bg:   setJson.data.theme_btn_bg   || currentSettings.theme_btn_bg   || '#c9a84c',
+              theme_navbar_bg:setJson.data.theme_navbar_bg|| currentSettings.theme_navbar_bg|| 'rgba(18,18,18,0.75)',
+              theme_wa_bg:    setJson.data.theme_wa_bg    || currentSettings.theme_wa_bg    || '#25d366',
+              theme_wa_text:  setJson.data.theme_wa_text  || currentSettings.theme_wa_text  || '#ffffff'
             };
             localStorage.setItem('rnj_site_settings', JSON.stringify(siteSettings));
           }
@@ -172,7 +217,15 @@ const API = {
           show_promo_banner: parseBool(setJson.data.show_promo_banner, currentSettings.show_promo_banner !== false),
           hero_bg_url: (setJson.data.hero_bg_url && String(setJson.data.hero_bg_url).trim() !== '') ? setJson.data.hero_bg_url : "assets/images/hero.jpg",
           enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
-          last_updated: setJson.data.last_settings_update || currentSettings.last_updated || new Date().toISOString()
+          last_updated: setJson.data.last_settings_update || currentSettings.last_updated || new Date().toISOString(),
+          // Theme colors
+          theme_bg:        setJson.data.theme_bg        || currentSettings.theme_bg        || '#080808',
+          theme_accent:    setJson.data.theme_accent    || currentSettings.theme_accent    || '#c9a84c',
+          theme_text:      setJson.data.theme_text      || currentSettings.theme_text      || '#f5f0e8',
+          theme_btn_bg:    setJson.data.theme_btn_bg    || currentSettings.theme_btn_bg    || '#c9a84c',
+          theme_navbar_bg: setJson.data.theme_navbar_bg || currentSettings.theme_navbar_bg || 'rgba(18,18,18,0.75)',
+          theme_wa_bg:     setJson.data.theme_wa_bg     || currentSettings.theme_wa_bg     || '#25d366',
+          theme_wa_text:   setJson.data.theme_wa_text   || currentSettings.theme_wa_text   || '#ffffff'
         };
 
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);

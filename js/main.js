@@ -3,6 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Apply saved theme immediately (before server sync) to avoid flash
+  API.applyTheme();
+
   initLiveRateTicker();
   initNavbar();
   initWishlistBadge();
@@ -13,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (CONFIG.APPS_SCRIPT_URL) {
     await API.checkAndSyncServer();
+    API.applyTheme();
     initLiveRateTicker();
     initHeroSection();
     initParticleCanvas();
@@ -23,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setInterval(async () => {
       const updated = await API.checkAndSyncServer();
       if (updated) {
+        API.applyTheme();
         initLiveRateTicker();
         initHeroSection();
         initParticleCanvas();
@@ -36,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (document.visibilityState === 'visible') {
         const updated = await API.checkAndSyncServer();
         if (updated) {
+          API.applyTheme();
           initLiveRateTicker();
           initHeroSection();
           initParticleCanvas();
