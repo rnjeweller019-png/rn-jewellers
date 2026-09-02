@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>RN Jewellers — Pure Silver Ornaments | Hanuman Market, Ambala Cantt</title>
-  <meta name="description" content="Masterfully handcrafted pure silver ornaments designed to commemorate life's most precious occasions. Crafting Timeless Silver For Generations. Visit us at Hanuman Market, Ambala Cantt, Haryana.">
+  <meta name="description"
+    content="Masterfully handcrafted pure silver ornaments designed to commemorate life's most precious occasions. Crafting Timeless Silver For Generations. Visit us at Hanuman Market, Ambala Cantt, Haryana.">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="assets/logo.png" type="image/png">
 
@@ -28,7 +30,7 @@
 
   <!-- ⚡ ZERO-FLASH THEME PRELOADER: Guarantees ONLY Google Sheet theme is ever shown -->
   <script>
-    (function() {
+    (function () {
       try {
         var s = localStorage.getItem('rnj_site_settings');
         if (s) {
@@ -47,12 +49,13 @@
         } else {
           // Brand-new first-time visitor: Shield page until Google Sheet theme arrives
           document.documentElement.classList.add('rnj-theme-pending');
-          setTimeout(function() { document.documentElement.classList.remove('rnj-theme-pending'); }, 1200);
+          setTimeout(function () { document.documentElement.classList.remove('rnj-theme-pending'); }, 1200);
         }
-      } catch(e) {}
+      } catch (e) { }
     })();
   </script>
 </head>
+
 <body>
 
   <!-- SYNC LOADING BAR: Gold shimmer shows while fetching latest data from Google Sheets -->
@@ -63,9 +66,12 @@
     <div class="container ticker-wrapper">
       <div class="ticker-items">
         <span class="ticker-badge">Live Market Rates</span>
-        <span class="ticker-item"><i class="fas fa-coins" style="color:var(--gold-primary);"></i> 22K Gold: <strong id="ticker-gold-22k">₹7,200/g</strong></span>
-        <span class="ticker-item"><i class="fas fa-coins" style="color:#ffffff;"></i> 24K Gold: <strong id="ticker-gold-24k">₹7,850/g</strong></span>
-        <span class="ticker-item"><i class="fas fa-ring" style="color:#c0c0c0;"></i> Silver: <strong id="ticker-silver">₹92/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-coins" style="color:var(--gold-primary);"></i> 22K Gold: <strong
+            id="ticker-gold-22k">₹7,200/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-coins" style="color:#ffffff;"></i> 24K Gold: <strong
+            id="ticker-gold-24k">₹7,850/g</strong></span>
+        <span class="ticker-item"><i class="fas fa-ring" style="color:#c0c0c0;"></i> Silver: <strong
+            id="ticker-silver">₹92/g</strong></span>
       </div>
       <div class="ticker-actions">
         <a href="appointments.html" class="ticker-link"><i class="fas fa-calendar-check"></i> Book Visit</a>
@@ -92,7 +98,8 @@
       </ul>
 
       <div class="nav-actions">
-        <button id="pwa-install-btn" class="btn btn-secondary btn-sm" style="display:none; font-size:0.8rem; padding:6px 12px;">
+        <button id="pwa-install-btn" class="btn btn-secondary btn-sm"
+          style="display:none; font-size:0.8rem; padding:6px 12px;">
           <i class="fas fa-download"></i> Install App
         </button>
         <a href="wishlist.html" class="btn-icon" title="View Saved Wishlist">
@@ -113,16 +120,19 @@
   </div>
 
   <!-- HERO SECTION -->
-  <section class="hero-section" style="position:relative; min-height:80vh; display:flex; align-items:center; background:linear-gradient(to right, rgba(8,8,8,0.95), rgba(8,8,8,0.6)), url('assets/images/hero.jpg') center/cover no-repeat; overflow:hidden;">
+  <section class="hero-section"
+    style="position:relative; min-height:80vh; display:flex; align-items:center; background-color:var(--bg-dark); overflow:hidden;">
     <canvas id="particles-canvas"></canvas>
     <div class="container" style="position:relative; z-index:2; padding:60px 1.5rem;">
       <div style="max-width:650px;" class="fade-in-up">
         <span class="section-subtitle hero-subtitle">CERTIFIED PURITY &amp; HALLMARKED</span>
-        <h1 class="hero-title" style="font-size:clamp(1.8rem, 6vw, 3.5rem); font-family:var(--font-brand); margin:15px 0 20px 0; line-height:1.15;">
+        <h1 class="hero-title"
+          style="font-size:clamp(1.8rem, 6vw, 3.5rem); font-family:var(--font-brand); margin:15px 0 20px 0; line-height:1.15;">
           Crafting <span class="gold-gradient-text hero-highlight">Timeless Silver</span> For Generations
         </h1>
         <p class="hero-desc" style="font-size:clamp(0.9rem, 2.5vw, 1.1rem); margin-bottom:35px; line-height:1.7;">
-          Explore our masterfully handcrafted pure silver ornaments designed to commemorate life's most precious occasions.
+          Explore our masterfully handcrafted pure silver ornaments designed to commemorate life's most precious
+          occasions.
         </p>
         <div style="display:flex; gap:15px; flex-wrap:wrap;">
           <a href="collections.html" class="btn btn-primary shimmer-btn"><i class="fas fa-gem"></i> Explore Catalog</a>
@@ -144,15 +154,17 @@
       <div class="product-grid" id="featured-products-grid">
         <!-- Rendered via JS -->
       </div>
-      
+
       <div style="text-align:center; margin-top:40px;">
-        <a href="collections.html" class="btn btn-secondary">View Entire Collection <i class="fas fa-arrow-right"></i></a>
+        <a href="collections.html" class="btn btn-secondary">View Entire Collection <i
+            class="fas fa-arrow-right"></i></a>
       </div>
     </div>
   </section>
 
   <!-- OCCASION CATEGORIES GRID -->
-  <section class="section" style="background:var(--surface-1); border-top:1px solid var(--border-dark); border-bottom:1px solid var(--border-dark);">
+  <section class="section"
+    style="background:var(--surface-1); border-top:1px solid var(--border-dark); border-bottom:1px solid var(--border-dark);">
     <div class="container">
       <div class="section-header">
         <span class="section-subtitle">SHOP BY OCCASION</span>
@@ -193,7 +205,8 @@
             <img src="assets/logo.png" alt="Logo" class="logo-img">
             <span class="brand-title gold-gradient-text">RN JEWELLERS</span>
           </div>
-          <p>Crafting Timeless Silver For Generations — masterfully handcrafted pure silver ornaments with purity, integrity, and hallmarked assurance.</p>
+          <p>Crafting Timeless Silver For Generations — masterfully handcrafted pure silver ornaments with purity,
+            integrity, and hallmarked assurance.</p>
         </div>
         <div>
           <h4>Quick Links</h4>
@@ -237,22 +250,23 @@
   </footer>
 
   <!-- SCRIPTS -->
-  <script src="js/config.js?v=3.6.0"></script>
-  <script src="js/api.js?v=3.6.0"></script>
-  <script src="js/main.js?v=3.6.0"></script>
-  <script src="js/pwa.js?v=3.6.0"></script>
+  <script src="js/config.js?v=3.5.0"></script>
+  <script src="js/api.js?v=3.5.0"></script>
+  <script src="js/main.js?v=3.5.0"></script>
+  <script src="js/pwa.js?v=3.5.0"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('featured-products-grid');
-      if (grid) {
-        const products = typeof getFeaturedProducts === 'function' ? getFeaturedProducts() : [];
-        if (products.length > 0) {
-          grid.innerHTML = products.map(renderProductCard).join('');
+      if (grid && typeof getFeaturedProducts === 'function') {
+        const products = getFeaturedProducts();
+        if (products.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No products available in catalog.</div>';
         } else {
-          grid.innerHTML = typeof renderSkeletonCards === 'function' ? renderSkeletonCards(4) : '';
+          grid.innerHTML = products.map(renderProductCard).join('');
         }
       }
     });
   </script>
 </body>
+
 </html>

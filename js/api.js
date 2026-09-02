@@ -32,7 +32,7 @@ const API = {
     return {
       promo_banner_text: "✨ Festive Offer: Special 15% OFF on Making Charges for All Pure Silver Collections!",
       show_promo_banner: true,
-      hero_bg_url: "assets/images/hero.jpg",
+      hero_bg_url: "",
       enable_particles: true,
       // Theme defaults
       theme_bg: '#080808',
@@ -280,6 +280,16 @@ const API = {
     if (!CONFIG.APPS_SCRIPT_URL) return false;
 
     try {
+      const rawProd = localStorage.getItem('rnj_products');
+      const hasProductCache = rawProd !== null && rawProd !== '[]';
+
+      // ⚡ FAST 1-SHOT PARALLEL FETCH on first visit: Loads products & settings simultaneously
+      if (!hasProductCache) {
+        await this.syncWithServer();
+        this.applyTheme();
+        return true;
+      }
+
       const nonce = `${Date.now()}_${Math.floor(Math.random()*100000)}`;
       const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings&_nc=${nonce}`);
       const setJson = await res.json();
@@ -333,8 +343,6 @@ const API = {
 
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
         const settingsChanged = JSON.stringify(currentSettings) !== JSON.stringify(newSiteSettings);
-        const rawProd = localStorage.getItem('rnj_products');
-        const hasProductCache = rawProd !== null;
 
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));
@@ -342,8 +350,8 @@ const API = {
         // Instant theme update as soon as server settings arrive (zero delay for new visitors)
         this.applyTheme();
 
-        // Always sync full catalog if product cache missing OR server settings/rates changed
-        if (!hasProductCache || settingsChanged || ratesChanged) {
+        // Sync full catalog if server settings or rates changed
+        if (settingsChanged || ratesChanged) {
           await this.syncWithServer();
           return true; // Trigger instant live UI update
         }

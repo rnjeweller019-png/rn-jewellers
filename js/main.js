@@ -200,12 +200,13 @@ function initHeroSection() {
   if (!hero) return;
 
   const settings = API.getSiteSettings();
-  let bgUrl = settings.hero_bg_url;
+  const bgUrl = settings.hero_bg_url;
   if (!bgUrl || String(bgUrl).trim() === '' || bgUrl === 'undefined' || bgUrl === 'null') {
-    bgUrl = 'assets/images/hero.jpg';
+    hero.style.backgroundImage = 'none';
+    return;
   }
 
-  // Preload image to ensure instant error fallback & zero black screen on iPhone Safari
+  // Preload image to ensure instant smooth rendering
   const img = new Image();
   const applyBg = (url) => {
     hero.style.backgroundImage = `linear-gradient(to right, rgba(8,8,8,0.7), rgba(8,8,8,0.3)), url('${url}')`;
@@ -215,10 +216,7 @@ function initHeroSection() {
   };
 
   img.onload = () => applyBg(bgUrl);
-  img.onerror = () => applyBg('assets/images/hero.jpg');
   img.src = bgUrl;
-
-  // Immediate initial styling before load resolves
   applyBg(bgUrl);
 }
 
@@ -286,21 +284,6 @@ function initParticleCanvas() {
   }
 
   render();
-}
-
-// Utility: Generate Shimmer Skeleton Cards while fetching data
-function renderSkeletonCards(count = 4) {
-  return Array(count).fill(0).map(() => `
-    <div class="product-card-skeleton">
-      <div class="skel-img"></div>
-      <div class="skel-body">
-        <div class="skel-line short"></div>
-        <div class="skel-line tall"></div>
-        <div class="skel-line"></div>
-        <div class="skel-line short"></div>
-      </div>
-    </div>
-  `).join('');
 }
 
 // Utility: Build HTML for Product Cards
@@ -377,15 +360,15 @@ function logVisitorAnalytics() {
 
     if (currentNow - currentLastLog >= FIVE_MIN_MS) {
       localStorage.setItem('rnj_last_visit_logged_time', currentNow.toString());
-      
+
       const isMobile = /Mobile|Android|iPhone/i.test(navigator.userAgent);
       const isTablet = /iPad|Tablet/i.test(navigator.userAgent);
       const deviceType = isTablet ? 'Tablet' : (isMobile ? 'Mobile' : 'Desktop');
-      
+
       let userTimezone = 'Asia/Kolkata';
       try {
         userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
-      } catch(e) {}
+      } catch (e) { }
 
       const userLang = navigator.language || 'en-US';
       const screenSize = `${window.screen.width}x${window.screen.height}`;
@@ -398,7 +381,7 @@ function logVisitorAnalytics() {
         language: userLang,
         screen: screenSize
       }));
-      fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => {});
+      fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => { });
     }
   }, 10000);
 }
