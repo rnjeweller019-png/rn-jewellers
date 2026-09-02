@@ -22,6 +22,16 @@
   --text-muted: #a0a0a0;
   --text-dim: #666666;
   --text-dark: #080808;
+
+  /* Theme Button & Component Overrides */
+  --btn-wa-bg: #25d366;
+  --btn-wa-text: #ffffff;
+  --btn-sec-border: #c9a84c;
+  --btn-sec-text: #f5d77f;
+  --ticker-bg: linear-gradient(90deg, #111 0%, #1a160d 50%, #111 100%);
+  --ticker-text: #f5d77f;
+  --promo-bg: linear-gradient(135deg, #f5d77f 0%, #c9a84c 50%, #967425 100%);
+  --promo-text: #080808;
   
   /* Status Colors */
   --success: #4caf7d;
@@ -123,9 +133,9 @@ img {
 
 /* TOP RATE TICKER BAR */
 .rate-ticker-bar {
-  background: linear-gradient(90deg, #111 0%, #1a160d 50%, #111 100%);
+  background: var(--ticker-bg, linear-gradient(90deg, #111 0%, #1a160d 50%, #111 100%));
   border-bottom: 1px solid var(--border-gold);
-  color: var(--gold-light);
+  color: var(--ticker-text, var(--gold-light));
   font-size: 0.85rem;
   padding: 6px 0;
   overflow: hidden;
@@ -322,8 +332,8 @@ img {
 
 /* PROMO BANNER */
 .promo-banner {
-  background: var(--gold-gradient);
-  color: var(--text-dark);
+  background: var(--promo-bg, var(--gold-gradient));
+  color: var(--promo-text, var(--text-dark));
   padding: 8px 15px;
   text-align: center;
   font-weight: 600;
@@ -338,7 +348,7 @@ img {
 .promo-close {
   background: none;
   border: none;
-  color: var(--text-dark);
+  color: var(--promo-text, var(--text-dark));
   font-size: 1.1rem;
   cursor: pointer;
   position: absolute;
@@ -376,24 +386,27 @@ img {
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--gold-primary);
-  color: var(--gold-light);
+  border: 1px solid var(--btn-sec-border, var(--gold-primary));
+  color: var(--btn-sec-text, var(--gold-light));
 }
 
 .btn-secondary:hover {
   background: rgba(201, 168, 76, 0.1);
-  border-color: var(--gold-light);
+  border-color: var(--btn-sec-border, var(--gold-light));
+  color: var(--btn-sec-text, var(--gold-light));
   transform: translateY(-2px);
 }
 
 .btn-whatsapp {
-  background: #25d366;
-  color: #fff;
+  background: var(--btn-wa-bg, #25d366);
+  color: var(--btn-wa-text, #ffffff);
   font-weight: 600;
 }
 
 .btn-whatsapp:hover {
-  background: #1eb956;
+  background: var(--btn-wa-bg, #1eb956);
+  color: var(--btn-wa-text, #ffffff);
+  filter: brightness(1.1);
   box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
   transform: translateY(-2px);
 }

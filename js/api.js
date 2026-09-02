@@ -36,10 +36,17 @@ const API = {
       enable_particles: true,
       // Theme defaults
       theme_bg: '#080808',
+      theme_surface_bg: '#111111',
       theme_accent: '#c9a84c',
       theme_text: '#f5f0e8',
+      theme_muted_text: '#a0a0a0',
       theme_btn_bg: '#c9a84c',
+      theme_btn_sec_border: '#c9a84c',
       theme_navbar_bg: 'rgba(18,18,18,0.75)',
+      theme_ticker_bg: '',
+      theme_ticker_text: '#f5d77f',
+      theme_promo_bg: '',
+      theme_promo_text: '#080808',
       theme_wa_bg: '#25d366',
       theme_wa_text: '#ffffff'
     };
@@ -49,29 +56,84 @@ const API = {
   applyTheme() {
     const s = this.getSiteSettings();
     const root = document.documentElement;
-    if (s.theme_bg)       root.style.setProperty('--bg-dark', s.theme_bg);
-    if (s.theme_accent) {
-      root.style.setProperty('--gold-primary', s.theme_accent);
-      root.style.setProperty('--gold-dark', s.theme_accent);
-      const hex = s.theme_accent.replace('#','');
-      const r = parseInt(hex.substring(0,2),16);
-      const g = parseInt(hex.substring(2,4),16);
-      const b = parseInt(hex.substring(4,6),16);
-      root.style.setProperty('--border-gold', `rgba(${r},${g},${b},0.25)`);
-      root.style.setProperty('--gold-glow', `0 0 25px rgba(${r},${g},${b},0.25)`);
-      root.style.setProperty('--gold-gradient', `linear-gradient(135deg, #ffffff 0%, ${s.theme_accent} 50%, ${s.theme_accent} 100%)`);
+
+    // 1. Page Background
+    if (s.theme_bg) root.style.setProperty('--bg-dark', s.theme_bg);
+
+    // 2. Card / Surface background & Dark borders
+    if (s.theme_surface_bg) {
+      root.style.setProperty('--surface-1', s.theme_surface_bg);
+      root.style.setProperty('--surface-2', s.theme_surface_bg);
+      root.style.setProperty('--surface-3', s.theme_surface_bg);
+    } else if (s.theme_bg) {
+      const isLight = s.theme_bg.toLowerCase().startsWith('#f') || s.theme_bg.toLowerCase().startsWith('#e');
+      root.style.setProperty('--surface-1', isLight ? '#ffffff' : '#111111');
+      root.style.setProperty('--surface-2', isLight ? '#f8f8f8' : '#161616');
+      root.style.setProperty('--border-dark', isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.08)');
     }
+
+    // 3. Text colors
     if (s.theme_text) {
       root.style.setProperty('--text-main', s.theme_text);
     }
-    if (s.theme_navbar_bg)  root.style.setProperty('--surface-glass', s.theme_navbar_bg);
-    // WhatsApp button color
-    if (s.theme_wa_bg || s.theme_wa_text) {
-      document.querySelectorAll('.floating-whatsapp, .btn-whatsapp').forEach(el => {
-        if (s.theme_wa_bg)   el.style.background = s.theme_wa_bg;
-        if (s.theme_wa_text) el.style.color = s.theme_wa_text;
-      });
+    if (s.theme_muted_text) {
+      root.style.setProperty('--text-muted', s.theme_muted_text);
+    } else if (s.theme_text) {
+      const isLightText = s.theme_text.toLowerCase().startsWith('#f') || s.theme_text.toLowerCase().startsWith('#e');
+      root.style.setProperty('--text-muted', isLightText ? '#a0a0a0' : '#666666');
     }
+
+    // 4. Primary Accent / Gold Color
+    if (s.theme_accent) {
+      root.style.setProperty('--gold-primary', s.theme_accent);
+      root.style.setProperty('--gold-light', s.theme_accent);
+      root.style.setProperty('--gold-dark', s.theme_accent);
+      root.style.setProperty('--btn-sec-border', s.theme_accent);
+      root.style.setProperty('--btn-sec-text', s.theme_accent);
+      const hex = s.theme_accent.replace('#','');
+      if (hex.length === 6) {
+        const r = parseInt(hex.substring(0,2),16);
+        const g = parseInt(hex.substring(2,4),16);
+        const b = parseInt(hex.substring(4,6),16);
+        root.style.setProperty('--border-gold', `rgba(${r},${g},${b},0.3)`);
+        root.style.setProperty('--gold-glow', `0 0 25px rgba(${r},${g},${b},0.3)`);
+      }
+    }
+
+    // 5. Primary CTA Button Background
+    if (s.theme_btn_bg) {
+      const btnGradient = s.theme_btn_bg.includes('gradient') 
+        ? s.theme_btn_bg 
+        : `linear-gradient(135deg, ${s.theme_btn_bg} 0%, ${s.theme_btn_bg} 100%)`;
+      root.style.setProperty('--gold-gradient', btnGradient);
+    }
+
+    // 6. Secondary Button Color
+    if (s.theme_btn_sec_border) {
+      root.style.setProperty('--btn-sec-border', s.theme_btn_sec_border);
+      root.style.setProperty('--btn-sec-text', s.theme_btn_sec_border);
+    }
+
+    // 7. Navbar Background
+    if (s.theme_navbar_bg) root.style.setProperty('--surface-glass', s.theme_navbar_bg);
+
+    // 8. Ticker Bar Background & Text
+    if (s.theme_ticker_bg) root.style.setProperty('--ticker-bg', s.theme_ticker_bg);
+    if (s.theme_ticker_text) root.style.setProperty('--ticker-text', s.theme_ticker_text);
+
+    // 9. Promo Banner Background & Text
+    if (s.theme_promo_bg) root.style.setProperty('--promo-bg', s.theme_promo_bg);
+    if (s.theme_promo_text) root.style.setProperty('--promo-text', s.theme_promo_text);
+
+    // 10. WhatsApp / Enquire Button Background & Text
+    if (s.theme_wa_bg) root.style.setProperty('--btn-wa-bg', s.theme_wa_bg);
+    if (s.theme_wa_text) root.style.setProperty('--btn-wa-text', s.theme_wa_text);
+
+    // Direct override for floating whatsapp & product enquire buttons
+    document.querySelectorAll('.floating-whatsapp, .btn-whatsapp').forEach(el => {
+      if (s.theme_wa_bg) el.style.backgroundColor = s.theme_wa_bg;
+      if (s.theme_wa_text) el.style.color = s.theme_wa_text;
+    });
   },
 
   // Save/Update Rates
@@ -165,13 +227,20 @@ const API = {
               hero_bg_url: (setJson.data.hero_bg_url && String(setJson.data.hero_bg_url).trim() !== '') ? setJson.data.hero_bg_url : "assets/images/hero.jpg",
               enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
               // Theme colors
-              theme_bg:       setJson.data.theme_bg       || currentSettings.theme_bg       || '#080808',
-              theme_accent:   setJson.data.theme_accent   || currentSettings.theme_accent   || '#c9a84c',
-              theme_text:     setJson.data.theme_text     || currentSettings.theme_text     || '#f5f0e8',
-              theme_btn_bg:   setJson.data.theme_btn_bg   || currentSettings.theme_btn_bg   || '#c9a84c',
-              theme_navbar_bg:setJson.data.theme_navbar_bg|| currentSettings.theme_navbar_bg|| 'rgba(18,18,18,0.75)',
-              theme_wa_bg:    setJson.data.theme_wa_bg    || currentSettings.theme_wa_bg    || '#25d366',
-              theme_wa_text:  setJson.data.theme_wa_text  || currentSettings.theme_wa_text  || '#ffffff'
+              theme_bg:           setJson.data.theme_bg           || currentSettings.theme_bg           || '#080808',
+              theme_surface_bg:   setJson.data.theme_surface_bg   || currentSettings.theme_surface_bg   || '',
+              theme_accent:       setJson.data.theme_accent       || currentSettings.theme_accent       || '#c9a84c',
+              theme_text:         setJson.data.theme_text         || currentSettings.theme_text         || '#f5f0e8',
+              theme_muted_text:   setJson.data.theme_muted_text   || currentSettings.theme_muted_text   || '',
+              theme_btn_bg:       setJson.data.theme_btn_bg       || currentSettings.theme_btn_bg       || '#c9a84c',
+              theme_btn_sec_border:setJson.data.theme_btn_sec_border|| currentSettings.theme_btn_sec_border|| '',
+              theme_navbar_bg:    setJson.data.theme_navbar_bg    || currentSettings.theme_navbar_bg    || 'rgba(18,18,18,0.75)',
+              theme_ticker_bg:    setJson.data.theme_ticker_bg    || currentSettings.theme_ticker_bg    || '',
+              theme_ticker_text:  setJson.data.theme_ticker_text  || currentSettings.theme_ticker_text  || '',
+              theme_promo_bg:     setJson.data.theme_promo_bg     || currentSettings.theme_promo_bg     || '',
+              theme_promo_text:   setJson.data.theme_promo_text   || currentSettings.theme_promo_text   || '',
+              theme_wa_bg:        setJson.data.theme_wa_bg        || currentSettings.theme_wa_bg        || '#25d366',
+              theme_wa_text:      setJson.data.theme_wa_text      || currentSettings.theme_wa_text      || '#ffffff'
             };
             localStorage.setItem('rnj_site_settings', JSON.stringify(siteSettings));
           }
@@ -219,13 +288,20 @@ const API = {
           enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
           last_updated: setJson.data.last_settings_update || currentSettings.last_updated || new Date().toISOString(),
           // Theme colors
-          theme_bg:        setJson.data.theme_bg        || currentSettings.theme_bg        || '#080808',
-          theme_accent:    setJson.data.theme_accent    || currentSettings.theme_accent    || '#c9a84c',
-          theme_text:      setJson.data.theme_text      || currentSettings.theme_text      || '#f5f0e8',
-          theme_btn_bg:    setJson.data.theme_btn_bg    || currentSettings.theme_btn_bg    || '#c9a84c',
-          theme_navbar_bg: setJson.data.theme_navbar_bg || currentSettings.theme_navbar_bg || 'rgba(18,18,18,0.75)',
-          theme_wa_bg:     setJson.data.theme_wa_bg     || currentSettings.theme_wa_bg     || '#25d366',
-          theme_wa_text:   setJson.data.theme_wa_text   || currentSettings.theme_wa_text   || '#ffffff'
+          theme_bg:            setJson.data.theme_bg            || currentSettings.theme_bg            || '#080808',
+          theme_surface_bg:    setJson.data.theme_surface_bg    || currentSettings.theme_surface_bg    || '',
+          theme_accent:        setJson.data.theme_accent        || currentSettings.theme_accent        || '#c9a84c',
+          theme_text:          setJson.data.theme_text          || currentSettings.theme_text          || '#f5f0e8',
+          theme_muted_text:    setJson.data.theme_muted_text    || currentSettings.theme_muted_text    || '',
+          theme_btn_bg:        setJson.data.theme_btn_bg        || currentSettings.theme_btn_bg        || '#c9a84c',
+          theme_btn_sec_border:setJson.data.theme_btn_sec_border|| currentSettings.theme_btn_sec_border|| '',
+          theme_navbar_bg:     setJson.data.theme_navbar_bg     || currentSettings.theme_navbar_bg     || 'rgba(18,18,18,0.75)',
+          theme_ticker_bg:     setJson.data.theme_ticker_bg     || currentSettings.theme_ticker_bg     || '',
+          theme_ticker_text:   setJson.data.theme_ticker_text   || currentSettings.theme_ticker_text   || '',
+          theme_promo_bg:      setJson.data.theme_promo_bg      || currentSettings.theme_promo_bg      || '',
+          theme_promo_text:    setJson.data.theme_promo_text    || currentSettings.theme_promo_text    || '',
+          theme_wa_bg:         setJson.data.theme_wa_bg         || currentSettings.theme_wa_bg         || '#25d366',
+          theme_wa_text:       setJson.data.theme_wa_text       || currentSettings.theme_wa_text       || '#ffffff'
         };
 
         const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
