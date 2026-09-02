@@ -36,20 +36,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }, 5000);
 
-    // Instant update check when switching back to the app/tab on iPhone or Android
-    document.addEventListener('visibilitychange', async () => {
-      if (document.visibilityState === 'visible') {
-        const updated = await API.checkAndSyncServer();
-        if (updated) {
-          API.applyTheme();
-          initLiveRateTicker();
-          initHeroSection();
-          initParticleCanvas();
-          initPromoBanner();
-          refreshPageContentsSilently();
-        }
+    // Instant update check when switching back to the app/tab on iPhone or Android PWA
+    const checkiPhoneResume = async () => {
+      const updated = await API.checkAndSyncServer();
+      if (updated) {
+        API.applyTheme();
+        initLiveRateTicker();
+        initHeroSection();
+        initParticleCanvas();
+        initPromoBanner();
+        refreshPageContentsSilently();
       }
+    };
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkiPhoneResume();
     });
+    window.addEventListener('pageshow', checkiPhoneResume);
   }
 });
 
