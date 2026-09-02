@@ -288,6 +288,21 @@ function initParticleCanvas() {
   render();
 }
 
+// Utility: Generate Shimmer Skeleton Cards while fetching data
+function renderSkeletonCards(count = 4) {
+  return Array(count).fill(0).map(() => `
+    <div class="product-card-skeleton">
+      <div class="skel-img"></div>
+      <div class="skel-body">
+        <div class="skel-line short"></div>
+        <div class="skel-line tall"></div>
+        <div class="skel-line"></div>
+        <div class="skel-line short"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
 // Utility: Build HTML for Product Cards
 function renderProductCard(product) {
   const isWishlisted = API.getWishlist().includes(product.id);
