@@ -84,10 +84,15 @@ function initCollectionsPage() {
           <p style="color:var(--text-muted);">Try adjusting your search query or filters.</p>
         </div>
       `;
+      grid.dataset.lastRender = '';
       return;
     }
 
-    grid.innerHTML = products.map(renderProductCard).join('');
+    const newHtml = products.map(renderProductCard).join('');
+    if (grid.dataset.lastRender !== newHtml) {
+      grid.dataset.lastRender = newHtml;
+      grid.innerHTML = newHtml;
+    }
   }
 
   globalFilterAndRender = filterAndRender;

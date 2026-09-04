@@ -311,7 +311,7 @@ const API = {
           show_gold_22k: parseBool(setJson.data.show_gold_22k, currentRates.show_gold_22k !== false),
           show_gold_24k: parseBool(setJson.data.show_gold_24k, currentRates.show_gold_24k !== false),
           show_silver: parseBool(setJson.data.show_silver, currentRates.show_silver !== false),
-          last_updated: setJson.data.last_rate_update || currentRates.last_updated || new Date().toISOString()
+          last_updated: setJson.data.last_rate_update || currentRates.last_updated || '2026-01-01T00:00:00.000Z'
         };
 
         const newSiteSettings = {
@@ -319,7 +319,7 @@ const API = {
           show_promo_banner: parseBool(setJson.data.show_promo_banner, currentSettings.show_promo_banner !== false),
           hero_bg_url: (setJson.data.hero_bg_url && String(setJson.data.hero_bg_url).trim() !== '') ? setJson.data.hero_bg_url : "assets/images/hero.jpg",
           enable_particles: parseBool(setJson.data.enable_particles, currentSettings.enable_particles !== false),
-          last_updated: setJson.data.last_settings_update || currentSettings.last_updated || new Date().toISOString(),
+          last_updated: setJson.data.last_settings_update || currentSettings.last_updated || '2026-01-01T00:00:00.000Z',
           // Theme colors
           theme_bg:            setJson.data.theme_bg            || currentSettings.theme_bg            || '#080808',
           theme_surface_bg:    setJson.data.theme_surface_bg    || currentSettings.theme_surface_bg    || '',
@@ -341,8 +341,27 @@ const API = {
           theme_hero_desc:     setJson.data.theme_hero_desc     || currentSettings.theme_hero_desc     || ''
         };
 
-        const ratesChanged = JSON.stringify(currentRates) !== JSON.stringify(newRates);
-        const settingsChanged = JSON.stringify(currentSettings) !== JSON.stringify(newSiteSettings);
+        const ratesChanged = 
+          currentRates.gold_22k !== newRates.gold_22k ||
+          currentRates.gold_24k !== newRates.gold_24k ||
+          currentRates.silver !== newRates.silver ||
+          currentRates.show_gold_22k !== newRates.show_gold_22k ||
+          currentRates.show_gold_24k !== newRates.show_gold_24k ||
+          currentRates.show_silver !== newRates.show_silver;
+
+        const settingsChanged = 
+          currentSettings.promo_banner_text !== newSiteSettings.promo_banner_text ||
+          currentSettings.show_promo_banner !== newSiteSettings.show_promo_banner ||
+          currentSettings.hero_bg_url !== newSiteSettings.hero_bg_url ||
+          currentSettings.enable_particles !== newSiteSettings.enable_particles ||
+          currentSettings.theme_bg !== newSiteSettings.theme_bg ||
+          currentSettings.theme_accent !== newSiteSettings.theme_accent ||
+          currentSettings.theme_text !== newSiteSettings.theme_text ||
+          currentSettings.theme_btn_bg !== newSiteSettings.theme_btn_bg ||
+          currentSettings.theme_navbar_bg !== newSiteSettings.theme_navbar_bg ||
+          currentSettings.theme_ticker_bg !== newSiteSettings.theme_ticker_bg ||
+          currentSettings.theme_promo_bg !== newSiteSettings.theme_promo_bg ||
+          currentSettings.theme_wa_bg !== newSiteSettings.theme_wa_bg;
 
         localStorage.setItem('rnj_rates', JSON.stringify(newRates));
         localStorage.setItem('rnj_site_settings', JSON.stringify(newSiteSettings));

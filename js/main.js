@@ -79,10 +79,14 @@ function refreshPageContentsSilently() {
   const featuredGrid = document.getElementById('featured-products-grid');
   if (featuredGrid && typeof renderProductCard === 'function') {
     const products = getFeaturedProducts();
-    if (products.length === 0) {
-      featuredGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No products available in catalog.</div>';
-    } else {
-      featuredGrid.innerHTML = products.map(renderProductCard).join('');
+    const newHtml = (products.length === 0)
+      ? '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No products available in catalog.</div>'
+      : products.map(renderProductCard).join('');
+    
+    // Only touch DOM if HTML actually changed!
+    if (featuredGrid.dataset.lastRender !== newHtml) {
+      featuredGrid.dataset.lastRender = newHtml;
+      featuredGrid.innerHTML = newHtml;
     }
   }
 
