@@ -89,6 +89,10 @@
   inset: 0;
   z-index: 999999;
   pointer-events: all;
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 #intro-overlay.done {
@@ -102,6 +106,10 @@
   height: 50%;
   background: #f5f0e8;
   will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 .door-top {
@@ -157,17 +165,27 @@
   z-index: 10;
   pointer-events: none;
   transition: opacity 0.5s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 #intro-logo img {
-  width: 240px;
-  height: 240px;
+  width: clamp(140px, 38vw, 240px);
+  height: clamp(140px, 38vw, 240px);
   display: block;
   object-fit: contain;
-  border-radius: 18px;
+  border-radius: clamp(14px, 3.5vw, 18px);
   border: 2px solid #c9a84c;
   box-shadow:
     0 10px 36px rgba(0, 0, 0, 0.32),
     0 0 0 1px rgba(255, 240, 180, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 768px) {
+  #intro-logo img {
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.32),
+      0 0 0 1px rgba(255, 240, 180, 0.18);
+  }
 }
