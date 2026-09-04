@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Apply saved theme immediately (before server sync) to avoid flash
   API.applyTheme();
 
+  initIntroAnimation();
   initLiveRateTicker();
   initNavbar();
   initWishlistBadge();
@@ -384,4 +385,50 @@ function logVisitorAnalytics() {
       fetch(`${CONFIG.APPS_SCRIPT_URL}?action=logVisit&data=${payload}`).catch(() => { });
     }
   }, 10000);
+}
+
+/**
+ * ══════════════════════════════════════════════════════════
+ * LUXURY INTRO ANIMATION (Doors Split & Logo Rise)
+ * ══════════════════════════════════════════════════════════
+ */
+function initIntroAnimation() {
+  const overlay = document.getElementById('intro-overlay');
+  if (!overlay) return;
+
+  const introLogo = document.getElementById('intro-logo');
+  const totalMs = 1600;
+  const holdMs = Math.round(totalMs * 0.35);  // Hold on closed seam (~560ms)
+  const doorMs = Math.round(totalMs * 0.65);  // Doors split & logo rise (~1040ms)
+  const doorTopTarget = '-160%';
+  const doorBottomTarget = '120%';
+  const easing = 'cubic-bezier(0.76, 0, 0.24, 1)';
+
+  setTimeout(() => {
+    const doorTop = document.querySelector('.door-top');
+    const doorBottom = document.querySelector('.door-bottom');
+
+    if (doorTop) {
+      doorTop.style.transition = `transform ${doorMs}ms ${easing}`;
+      doorTop.style.transform = `translateY(${doorTopTarget})`;
+    }
+    if (doorBottom) {
+      doorBottom.style.transition = `transform ${doorMs}ms ${easing}`;
+      doorBottom.style.transform = `translateY(${doorBottomTarget})`;
+    }
+    overlay.classList.add('open');
+
+    // Gentle fade out of floating logo once it reaches top
+    setTimeout(() => {
+      if (introLogo) {
+        introLogo.style.transition = 'opacity 0.6s ease';
+        introLogo.style.opacity = '0';
+      }
+    }, doorMs + 80);
+
+    // Remove overlay from DOM flow
+    setTimeout(() => {
+      overlay.classList.add('done');
+    }, doorMs + 700);
+  }, holdMs);
 }
