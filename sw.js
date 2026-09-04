@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rnj-jewellers-v460';
+const CACHE_NAME = 'rnj-jewellers-v470';
 
 // Static assets only — NO HTML pages cached (prevents old website showing on new phones)
 const STATIC_ASSETS = [

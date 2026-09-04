@@ -421,7 +421,14 @@ const API = {
         purityText = '999 Fine Silver';
       } else {
         metalRate = rates.silver;
-        purityText = product.purity ? `${product.purity} Silver` : 'Silver';
+        const pStr = String(product.purity || '').trim();
+        if (!pStr) {
+          purityText = 'Silver';
+        } else if (pStr.toLowerCase().includes('silver')) {
+          purityText = pStr;
+        } else {
+          purityText = `${pStr} Silver`;
+        }
       }
     } else {
       metalName = 'Gold';
@@ -437,7 +444,14 @@ const API = {
         purityText = '14K Gold';
       } else {
         metalRate = rates.gold_22k;
-        purityText = '22K Gold';
+        const pStr = String(product.purity || '').trim();
+        if (!pStr) {
+          purityText = '22K Gold';
+        } else if (pStr.toLowerCase().includes('gold')) {
+          purityText = pStr;
+        } else {
+          purityText = `${pStr} Gold`;
+        }
       }
     }
 

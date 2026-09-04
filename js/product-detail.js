@@ -13,9 +13,55 @@ function initProductDetailPage() {
   if (!container) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id') || 'PRD_001';
+  const id = urlParams.get('id');
   
+  if (!id) {
+    container.innerHTML = `
+      <div style="text-align:center; padding: 60px 20px;">
+        <i class="fas fa-gem" style="font-size:2.5rem; color:var(--gold-light); margin-bottom:15px;"></i>
+        <h2 style="font-family:var(--font-heading); color:var(--text-main); margin-bottom:10px;">Select an Ornament</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px;">Explore our handcrafted hallmarked silver & gold collections.</p>
+        <a href="collections.html" class="btn btn-primary"><i class="fas fa-th-large"></i> Explore Catalog</a>
+      </div>
+    `;
+    return;
+  }
+
   const product = API.getProductById(id);
+  const allProducts = API.getProducts();
+
+  // If products are still syncing from Google Sheet on first visit
+  if (!product) {
+    if (!allProducts || allProducts.length === 0) {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:clamp(20px, 5vw, 50px); align-items:start;">
+          <div style="background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px;">
+            <i class="fas fa-spinner fa-spin" style="font-size:2.5rem; color:var(--gold-light);"></i>
+            <span style="font-size:0.9rem; color:var(--text-muted);">Fetching Live Showroom Details...</span>
+          </div>
+          <div>
+            <div style="height:20px; width:45%; background:var(--surface-2); border-radius:4px; margin-bottom:15px;"></div>
+            <div style="height:35px; width:80%; background:var(--surface-2); border-radius:4px; margin-bottom:20px;"></div>
+            <div style="height:140px; width:100%; background:var(--surface-2); border-radius:8px; margin-bottom:20px;"></div>
+            <div style="height:45px; width:65%; background:var(--surface-2); border-radius:8px;"></div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Products synced but this specific ID does not exist
+    container.innerHTML = `
+      <div style="text-align:center; padding: 60px 20px;">
+        <i class="fas fa-search" style="font-size:2.5rem; color:var(--gold-light); margin-bottom:15px;"></i>
+        <h2 style="font-family:var(--font-heading); color:var(--text-main); margin-bottom:10px;">Ornament Not Found</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px;">This piece may have been updated or moved to our custom order gallery.</p>
+        <a href="collections.html" class="btn btn-primary"><i class="fas fa-th-large"></i> Browse Collections</a>
+      </div>
+    `;
+    return;
+  }
+
   API.addRecentlyViewed(product.id);
 
   const calc = product.calculated;

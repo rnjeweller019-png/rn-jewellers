@@ -2,16 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Page Not Found — RN Jewellers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <!-- ⚡ ZERO-FLASH THEME PRELOADER: Guarantees ONLY Google Sheet theme is ever shown -->
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('rnj_site_settings');
+        if (s) {
+          var p = JSON.parse(s);
+          var r = document.documentElement;
+          if (p.theme_bg) { r.style.setProperty('--bg-dark', p.theme_bg); document.documentElement.style.backgroundColor = p.theme_bg; }
+          if (p.theme_surface_bg) { r.style.setProperty('--surface-1', p.theme_surface_bg); r.style.setProperty('--surface-2', p.theme_surface_bg); }
+          if (p.theme_accent) { r.style.setProperty('--gold-primary', p.theme_accent); r.style.setProperty('--gold-light', p.theme_accent); }
+          if (p.theme_text) r.style.setProperty('--text-main', p.theme_text);
+          if (p.theme_muted_text) r.style.setProperty('--text-muted', p.theme_muted_text);
+          if (p.theme_navbar_bg) r.style.setProperty('--surface-glass', p.theme_navbar_bg);
+        }
+      } catch(e){}
+    })();
+  </script>
 </head>
-<body style="display:flex; align-items:center; justify-content:center; text-align:center; min-height:100vh;">
-  <div>
-    <h1 style="font-size:6rem; font-family:var(--font-brand); color:var(--gold-primary);">404</h1>
-    <h2 style="font-size:2rem; margin-bottom:15px;">Page Not Found</h2>
-    <p style="color:var(--text-muted); margin-bottom:30px;">The requested page could not be located in our showroom.</p>
-    <a href="index.html" class="btn btn-primary">Return to Homepage</a>
+<body style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg-dark); color:var(--text-main); padding:20px; text-align:center;">
+  <div style="max-width:520px; background:var(--surface-1); border:1px solid var(--border-gold); border-radius:var(--radius-lg); padding:clamp(30px, 6vw, 50px); box-shadow:0 10px 40px rgba(0,0,0,0.3);">
+    <div style="font-size:clamp(4rem, 12vw, 6.5rem); font-family:var(--font-brand); font-weight:800; color:var(--gold-primary); line-height:1; margin-bottom:15px; text-shadow:0 0 25px var(--gold-glow);">404</div>
+    <h1 style="font-size:clamp(1.4rem, 4vw, 1.8rem); font-family:var(--font-heading); margin-bottom:12px; color:var(--text-main);">Page Not Found</h1>
+    <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:30px; line-height:1.6;">
+      The exquisite page or ornament you were looking for is not located in this showcase. It may have been relocated or updated.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center;">
+      <a href="index.html" class="btn btn-primary" style="padding:12px 24px;"><i class="fas fa-home"></i> Return to Homepage</a>
+      <a href="collections.html" class="btn btn-secondary" style="padding:12px 24px;"><i class="fas fa-gem"></i> Explore Catalog</a>
+    </div>
   </div>
 </body>
 </html>
