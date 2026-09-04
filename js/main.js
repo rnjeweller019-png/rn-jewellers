@@ -396,6 +396,29 @@ function initIntroAnimation() {
   const overlay = document.getElementById('intro-overlay');
   if (!overlay) return;
 
+  // Detect whether this is an explicit page reload
+  let isReload = false;
+  try {
+    const navEntries = performance.getEntriesByType('navigation');
+    if (navEntries && navEntries.length > 0) {
+      isReload = navEntries[0].type === 'reload';
+    } else if (window.performance && window.performance.navigation) {
+      isReload = window.performance.navigation.type === 1;
+    }
+  } catch (e) { }
+
+  const hasSeenIntro = sessionStorage.getItem('rnj_intro_shown');
+
+  // If already seen in this session and NOT an explicit reload, bypass doors instantly
+  if (hasSeenIntro && !isReload) {
+    overlay.style.display = 'none';
+    overlay.classList.add('done');
+    return;
+  }
+
+  // Mark session so internal navigation (Collections -> Home, etc.) skips the doors
+  sessionStorage.setItem('rnj_intro_shown', 'true');
+
   const introLogo = document.getElementById('intro-logo');
   const totalMs = 1600;
   const holdMs = Math.round(totalMs * 0.35);  // Hold on closed seam (~560ms)

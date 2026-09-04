@@ -51,6 +51,18 @@
           document.documentElement.classList.add('rnj-theme-pending');
           setTimeout(function () { document.documentElement.classList.remove('rnj-theme-pending'); }, 1200);
         }
+
+        // ⚡ ZERO-FLASH INTRO SKIP: If user already entered in this session, skip intro doors instantly on internal navigation
+        var isReload = false;
+        try {
+          var navEntries = performance.getEntriesByType('navigation');
+          if (navEntries && navEntries.length > 0) isReload = navEntries[0].type === 'reload';
+          else if (window.performance && window.performance.navigation) isReload = window.performance.navigation.type === 1;
+        } catch (e) { }
+
+        if (sessionStorage.getItem('rnj_intro_shown') && !isReload) {
+          document.documentElement.classList.add('rnj-intro-skip');
+        }
       } catch (e) { }
     })();
   </script>

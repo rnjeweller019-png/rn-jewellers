@@ -95,8 +95,9 @@
   user-select: none;
 }
 
-#intro-overlay.done {
-  display: none;
+#intro-overlay.done,
+html.rnj-intro-skip #intro-overlay {
+  display: none !important;
 }
 
 .door {
